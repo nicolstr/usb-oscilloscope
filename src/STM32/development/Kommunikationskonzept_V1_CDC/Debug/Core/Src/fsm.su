@@ -1,0 +1,10 @@
+../Core/Src/fsm.c:61:6:fsm_run	16	static
+../Core/Src/fsm.c:100:6:fsm_add_event	16	static
+../Core/Src/fsm.c:108:13:fsm_init	16	static
+../Core/Src/fsm.c:117:13:fsm_dispatch	16	static
+../Core/Src/fsm.c:127:13:fsm_transition	16	static
+../Core/Src/fsm.c:141:13:fsm_state_init	16	static
+../Core/Src/fsm.c:162:13:fsm_state_idle	16	static
+../Core/Src/fsm.c:180:13:fsm_state_data_acquisition	16	static
+../Core/Src/fsm.c:205:13:fsm_state_data_transmission	16	static
+../Core/Src/fsm.c:225:13:fsm_state_wait_for_ACK	16	static

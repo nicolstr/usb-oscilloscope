@@ -1,0 +1,5 @@
+../Core/Src/queue.c:25:6:enqueue	1
+../Core/Src/queue.c:37:6:dequeue	2
+../Core/Src/queue.c:51:6:STANDBY	1
+../Core/Src/queue.c:59:6:ENTER_CRITICAL	1
+../Core/Src/queue.c:66:6:LEAVE_CRITICAL	1
