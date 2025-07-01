@@ -4,7 +4,7 @@ which was carried out in the summer semester 2025 at the efi faculty of the Univ
 # Overview
 ### Project structure:
 ![Project structure separated into areas of responsibility.](doc/img/Projektstruktur.png)
-<ins>legend:</ins><br>
-HW - hardware<br>
-FW - firmware<br>
-SW - software<br>
+<ins>legend:</ins>\
+HW - hardware\
+FW - firmware\
+SW - software
