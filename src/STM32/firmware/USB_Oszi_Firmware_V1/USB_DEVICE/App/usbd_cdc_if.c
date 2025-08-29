@@ -231,11 +231,11 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   		// bit 0 = DTR (Data Terminal Ready), bit 1 = RTS
 		if (pbuf[0] & 0x01)
 		{
-			vcpConnected = 1;  // DTR gesetzt – Verbindung aktiv
+			vcpConnected = 1;  // DTR set – connection is open
 		}
 		else
 		{
-			vcpConnected = 0;  // DTR gelöscht – Verbindung geschlossen
+			vcpConnected = 0;  // DTR cleared – connection is closed
 		}
 		break;
 

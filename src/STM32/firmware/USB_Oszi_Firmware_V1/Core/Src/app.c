@@ -20,7 +20,16 @@
 
 #define MAX_TRANSFER_BYTELENGTH 1000
 
+#define FREQ_TIMER 100000000
+#define MAX_FREQ_ADC 10000000
+#define MIN_FREQ_ADC 20000
+#define INIT_FREQ_ADC MAX_FREQ_ADC
+
+#define MASK_D0_D6	0x7F
+#define MASK_D7_D11 0xF80
+
 /* PRIVATE FUNCTION PROTOTYPES */
+static void applyMovingAverageFilter();
 static void CDC_Send(uint8_t* data, uint16_t len);
 static void receiveCommand();
 static void processCommand(const char* cmd);
@@ -41,22 +50,37 @@ static volatile uint8_t usbRxFlag = 0;
 static volatile uint8_t cmdRxBuffer[CMD_RX_BUFFER_SIZE];
 static volatile uint16_t cmdRxIndex = 0;
 
+/* configuration variables (controllable by PC application) */
 static volatile uint32_t newSamplingFrequency = 10000000;
-static volatile TRIGGERMODE_T currentTriggerMode = TRIGGER_RISING_EDGE;
 static volatile uint32_t currentSamplingFrequency = 10000000;
 
+static volatile uint16_t newReferenceVoltage = 0;
+static volatile uint16_t currentReferenceVoltage = 0;
+
+static volatile TRIGGERMODE_T currentTriggerMode = TRIGGER_RISING_EDGE;
+
+// number of points used by moving average filter
+static volatile uint32_t newNumOfPoints = 51;
+static volatile uint32_t currentNumOfPoints = 51;
+
+/* status variables */
+static volatile uint8_t overflowHappened = 0;
+
 /* GLOBAL VARIABLES */
-
-/* Global array variable for storing the 12bit sampling values from the ADC[D11...D0] */
-volatile uint16_t sampleBuffer[NUMBER_OF_ROWS*NUMBER_OF_COLUMNS*NUM_OF_TRANSFERS_PER_TRANSACTION] = {0};
-
-// overflowBuffer is needed to bridge the time until the DMA is disabled
-// size is dependent on the number of instructions, before DMA is disabled in the ISR
-volatile uint16_t overflowBuffer[1000] = {0};
 
 // array, that holds the base addresses for each DMA transaction
 // <NUM_OF_TRANSFERS_PER_TRANSACTION> sample values are referenced per array element
 volatile uint32_t* addressArray[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS] = {0};
+
+/* Global array variable for storing the 12bit sampling values from the ADC[D11...D0] */
+volatile int16_t sampleBuffer[NUM_OF_SAMPLES] = {0};
+
+volatile int16_t filteredSampleBuffer[NUM_OF_SAMPLES] = {0};
+static volatile uint8_t movAvgFilterActive = 0;
+
+// overflowBuffer is needed to bridge the time until the DMA is disabled
+// size is dependent on the number of possible transfers, before DMA is disabled in the ISR
+volatile uint16_t overflowBuffer[1000] = {0};
 
 
 
@@ -144,47 +168,76 @@ void setOnboardStatusLEDs(uint8_t status)
  *	 													*/
 void configureSamplingFrequency()
 {
-	currentSamplingFrequency = newSamplingFrequency;
-
 	// disable TIM1
 	TIM1->CR1 &= ~TIM_CR1_CEN;
-	uint16_t prescaleValueTIM1 = 0;
 
-	if(currentSamplingFrequency >= 10000000)
+	// ARR-value
+	uint16_t TIM1_ticks = 0;
+
+	// Timer-Clk: 100 MHz
+	// Timer-Clk is set in TIM1_Init())
+
+	// max. frequency: 10MHz (ADC DS p.4 - timing characteristics)
+	if(newSamplingFrequency > MAX_FREQ_ADC)
 	{
-		prescaleValueTIM1 = 0;
-		currentSamplingFrequency = 10000000;
+		newSamplingFrequency = MAX_FREQ_ADC;
 	}
-	else if(currentSamplingFrequency >= 1000000)
+	// min. frequency: 20kHz (ADC DS p.4 - timing characteristics)
+	else if(newSamplingFrequency < MIN_FREQ_ADC)
 	{
-		prescaleValueTIM1 = 9;
-		currentSamplingFrequency = 1000000;
+		newSamplingFrequency = MIN_FREQ_ADC;
 	}
-	else if(currentSamplingFrequency >= 100000)
-	{
-		prescaleValueTIM1 = 99;
-		currentSamplingFrequency = 100000;
-	}
-	else if(currentSamplingFrequency >= 10000)
-	{
-		prescaleValueTIM1 = 999;
-		currentSamplingFrequency = 10000;
-	}
-	else if(currentSamplingFrequency >= 1000)
-	{
-		prescaleValueTIM1 = 9999;
-		currentSamplingFrequency = 1000;
-	}
-	else
-	{
-		prescaleValueTIM1 = 0;
-		currentSamplingFrequency = 10000000;
-	}
-	// set clock with prescaler to clock_cnt=clock_in/(PSC+1)
-	TIM1->PSC = prescaleValueTIM1;
+
+	TIM1_ticks = (FREQ_TIMER / newSamplingFrequency) - 1;
+
+	// set auto-reload register (ARR)
+	TIM1->ARR &= ~(0xFFFF);
+	TIM1->ARR |= TIM1_ticks;
+	// set capture conmpare register
+	TIM1->CCR1 &= ~(0xFFFF);
+	TIM1->CCR1 |= (TIM1_ticks + 1) / 2;
+
+	currentSamplingFrequency = FREQ_TIMER / (TIM1_ticks + 1);
 
 	// enable TIM1
 	TIM1->CR1 |= TIM_CR1_CEN;
+}
+
+/* void configureReferenceVoltage()
+ *
+ * configures the external DAC (LTC1450) to set the ADC reference voltage in mV
+ * according to the variable newReferenceVoltage (value sent over from PC)
+ *
+ * µC[PE14:PE10, PE8:PE2] --> DAC[D11:D0]
+ * PE0: /CLEAR
+ * PE1: /LOAD
+ * 														*/
+void configureReferenceVoltage()
+{
+	// set LOAD=1 -> deactivate DAC-Latch (don't update DAC with value from data pins)
+	GPIOE->ODR |= GPIO_ODR_OD1;
+
+	// Vref = 4096mV - VDAC
+	uint16_t DAC_val = 4095 - newReferenceVoltage;
+
+	uint16_t DAC_ODR_val = 0, temp;
+
+	// set bits DAC[D0:D6] ( µC[PE2:PE8] )
+	temp = DAC_val & MASK_D0_D6;				// extract DAC[D0:D6]
+	DAC_ODR_val |= (temp << 2);		// prepare assignment to µC[PE2:PE8]
+	// set bits DAC[D7:D11] ( µC[PE10:PE14] )
+	temp = (DAC_val & MASK_D7_D11) >> 7;			// extract DAC[D7:D11] and flush right
+	DAC_ODR_val |= (temp << 10);		// prepare assignment to µC[PE10:PE14]
+
+	// clear µC[PE2:PE8, PE10:PE14]
+	GPIOE->ODR &= ~(GPIO_ODR_OD2|GPIO_ODR_OD3|GPIO_ODR_OD4|GPIO_ODR_OD5|GPIO_ODR_OD6|GPIO_ODR_OD7|GPIO_ODR_OD8|
+				    GPIO_ODR_OD10|GPIO_ODR_OD11|GPIO_ODR_OD12|GPIO_ODR_OD13|GPIO_ODR_OD14);
+	GPIOE->ODR |= DAC_ODR_val;					// assign DAC[D0:D11]
+
+	currentReferenceVoltage = newReferenceVoltage;
+
+	// set LOAD=0 -> activate DAC-Latch (update DAC with value from data pins)
+	GPIOE->ODR &= ~GPIO_ODR_OD1;
 }
 
 /* void configureTrigger(TRIGGERMODE_T triggerMode)
@@ -239,6 +292,98 @@ void manualTrigger()
 			DMA2_Stream5->CR |= DMA_SxCR_EN;
 }
 
+/* void configureMovAvgFilter()
+ *
+ * sets the "number of points" variable for the moving average filter (value sent over from PC)
+ *	 													*/
+void configureMovAvgFilter()
+{
+	/* deactivate filter, if:
+	* 1. normal deactivation (numOfPoints == 0)
+	* 2. filter points > number of samples
+	* 3. number of points are an even number
+	* 											*/
+	if( (newNumOfPoints == 0) || (newNumOfPoints > NUM_OF_SAMPLES) || ((newNumOfPoints % 2) != 1) )
+	{
+		movAvgFilterActive = 0;
+		currentNumOfPoints = 0;
+	}
+	/* activate filter */
+	else
+	{
+		movAvgFilterActive = 0;
+		currentNumOfPoints = newNumOfPoints;
+	}
+}
+
+/* void preprocessData()
+ *
+ * 1. takes raw ADC input data (see pin arrangement in GPIO_Init()) and calculates
+ * 16-bit signed integer
+ *
+ * 2. extracts OF (overflow) information (if OF-bit was set at any moment, overflow happened)
+ *	 													*/
+void preprocessData()
+{
+	overflowHappened = 0x00;
+	for(uint32_t i = 0; i < NUM_OF_SAMPLES; i++)
+	{
+		uint16_t tempDatapoint = sampleBuffer[i];
+		// shift (see ADC->µC pin layout)
+		tempDatapoint >>= 3;
+		// check OF-bit (12th bit in data)
+		if(tempDatapoint & (1 << 12))
+			overflowHappened = 0xFF;
+		// mask out OF-bit
+		tempDatapoint &= 0xFFF;
+		// if datapoint is negative reverse 2's complement
+		if(((tempDatapoint >> 11) & 1) == 1)
+		{
+			// 1. minus 1
+			tempDatapoint -= 1;
+			// 2. invert all data-bits (12bit)
+			tempDatapoint ^= 0xFFF;
+			// 3. add negative sign
+			sampleBuffer[i] = -tempDatapoint;
+		}
+		else
+		{
+			sampleBuffer[i] = tempDatapoint;
+		}
+	}
+
+	// further preprocessing
+	if(movAvgFilterActive == 1)
+	{
+		applyMovingAverageFilter();
+	}
+}
+
+/* static void applyMovingAverageFilter()
+ *
+ * applies a moving average filter to the sampled data
+ * input: int16_t sampleBuffer
+ * output: int16_t filteredSampleBuffer
+ *
+ * from https://www.analog.com/media/en/technical-documentation/dsp-book/dsp_book_Ch15.pdf
+ * p.2 TABLE 15-1
+ *	 													*/
+static void applyMovingAverageFilter()
+{
+	uint16_t halfPointWidth = ((currentNumOfPoints-1)/2);
+	// numOfPoints must be an odd number (checked in configureMovAvgFilter())
+	// odd number -> filter is applied
+	for(uint32_t i = halfPointWidth; i <= NUM_OF_SAMPLES-(halfPointWidth+1); i++)
+	{
+		filteredSampleBuffer[i] = 0;
+		for(uint32_t j = -halfPointWidth; j <= halfPointWidth; j++)
+		{
+			filteredSampleBuffer[i] += sampleBuffer[i+j];
+		}
+		filteredSampleBuffer[i] /= currentNumOfPoints;
+	}
+}
+
 /* --- COMMUNICATION --- */
 
 /* void usbRxCallback(uint8_t* Buf, uint32_t *Len)
@@ -285,6 +430,19 @@ void sendCurrentSamplingFrequency()
 	sendCommand(strncat(tempStr1, tempStr2, 20));
 }
 
+/* void sendCurrentReferenceVoltage()
+ *
+ * sends a confirmation string, that shows the real ADC reference voltage
+ * currently active
+ *	 													*/
+void sendCurrentReferenceVoltage()
+{
+	char tempStr1[] = "REFERENCE_VOLTAGE: ";
+	char tempStr2[20];
+	sprintf(tempStr2, "%u", currentReferenceVoltage);
+	sendCommand(strncat(tempStr1, tempStr2, 20));
+}
+
 /* void sendCurrentTriggerMode()
  *
  * sends a confirmation string, that shows the real trigger mode
@@ -298,11 +456,43 @@ void sendCurrentTriggerMode()
 		sendCommand("TRIGGER:FALLING_EDGE");
 }
 
+/* void sendCurrentNumOfPoints()
+ *
+ * sends a confirmation string, that shows the real number of points
+ * currently used for the moving average filter
+ *
+ * if number of points is 0, filter is not active
+ *	 													*/
+void sendCurrentNumOfPoints()
+{
+	char tempStr1[] = "MOVING_AVERAGE: ";
+	char tempStr2[20];
+	sprintf(tempStr2, "%u", currentNumOfPoints);
+	sendCommand(strncat(tempStr1, tempStr2, 20));
+}
+
+/* void sendData()
+ *
+ * 1. sends the sampling data as a series of bytes (data is 2 bytes long, LSB is sent first)
+ *
+ * 2. after the sampling data, the overflow (OF) data is sent as a single byte:
+ * 	- 0xFF: overflow
+ * 	- 0x00: no overflow
+ *	 													*/
 void sendData()
 {
-	int remainingBytes = NUM_OF_TRANSFERS_PER_TRANSACTION*NUMBER_OF_ROWS*NUMBER_OF_COLUMNS*2;
+	int remainingBytes = NUM_OF_SAMPLES*2;
 	int numberOfBytes = MAX_TRANSFER_BYTELENGTH;
 	int idxSampleNumber = 0;
+
+	int16_t(*dataSource)[NUM_OF_SAMPLES];
+
+	// check if filter is active
+	if(movAvgFilterActive == 1)
+		dataSource = &filteredSampleBuffer;
+	else
+		dataSource = &sampleBuffer;
+
 	// send data in portions of <MAX_TRANSFER_BYTELENGTH> bytes
 	while(remainingBytes > 0)
 	{
@@ -313,11 +503,13 @@ void sendData()
 
 		remainingBytes -= numberOfBytes;
 
-		CDC_Send((uint8_t*)(&sampleBuffer[idxSampleNumber]), numberOfBytes);
+		CDC_Send((uint8_t*)(&((*dataSource)[idxSampleNumber])), numberOfBytes);
 		// prepare index for next transfer
 		// (next <MAX_TRANSFER_BYTELENGTH> bytes = <MAX_TRANSFER_BYTELENGTH / 2> sample values)
 		idxSampleNumber += MAX_TRANSFER_BYTELENGTH/2;
 	}
+	// send overflow information byte
+	CDC_Send((uint8_t*)(&overflowHappened), 1);
 }
 
 /* void CDC_Send(uint8_t* data, uint16_t len)
@@ -384,15 +576,23 @@ static void processCommand(const char* cmd)
 	else if (strcmp(cmd, "APP") == 0) {
     	fsm_add_event(EV_START_APP);
     }
-    else if (strncmp(cmd, "CONFIGURE_FREQ <FREQ>", 14) == 0) {
+    else if (strncmp(cmd, "CONFIGURE_FREQ <FREQ_IN_HZ>", 14) == 0) {
     	sscanf (cmd,"%*s %u", &newSamplingFrequency);
     	fsm_add_event(EV_CONFIGURE_FREQ);
+    }
+	else if (strncmp(cmd, "CONFIGURE_REF_VOLT <VOLTAGE_IN_MV>", 18) == 0) {
+		sscanf (cmd,"%*s %u", &newReferenceVoltage);
+		fsm_add_event(EV_CONFIGURE_REF_VOLT);
     }
     else if (strcmp(cmd, "CONFIGURE_TRIG_RISE_EDGE") == 0) {
     	fsm_add_event(EV_CONFIGURE_TRIG_RISE_EDGE);
     }
     else if (strcmp(cmd, "CONFIGURE_TRIG_FALL_EDGE") == 0) {
     	fsm_add_event(EV_CONFIGURE_TRIG_FALL_EDGE);
+    }
+	else if (strncmp(cmd, "CONFIGURE_MOV_AVG <NUM_OF_POINTS>", 17) == 0) {
+		sscanf (cmd,"%*s %u", &newNumOfPoints);
+		fsm_add_event(EV_CONFIGURE_MOV_AVG);
     }
     else if (strcmp(cmd, "RUN_START") == 0) {
     	fsm_add_event(EV_SAMPL_RUN_START);
@@ -521,8 +721,9 @@ static void GPIO_Init()
 	GPIOE->MODER |= (GPIO_MODER_MODER0_0|GPIO_MODER_MODER1_0);
 	// open-drain outputs (OT=1), external pull-up are used (3V3 -> 5V)
 	GPIOE->OTYPER |= (GPIO_OTYPER_OT0|GPIO_OTYPER_OT1);
-	// set LOAD=0 and CLEAR=1 -> DAC-Output=0V -> Vref(ADC)=4.096V
-	GPIOE->ODR &= ~(GPIO_ODR_OD0|GPIO_ODR_OD1);
+	// set /LOAD=0 and /CLEAR=1 -> DAC-Output=0V -> Vref(ADC)=4.096V
+	GPIOE->ODR &= ~(GPIO_ODR_OD1);	// /LOAD=0
+	GPIOE->ODR |= GPIO_ODR_OD0;		// /CLEAR=1
 
 }
 
@@ -729,11 +930,11 @@ static void TIM1_Init()
 
 	// set auto-reload value
 	TIM1->ARR &= ~(0xFFFF);
-	uint16_t TIM1_ticks = 9;
+	uint16_t TIM1_ticks = (FREQ_TIMER / INIT_FREQ_ADC) - 1;
 	TIM1->ARR |= TIM1_ticks; 	// period: (9+1)ticks = 100ns
 	// set Capture/Compare register value
 	TIM1->CCR1 &= ~(0xFFFF);
-	TIM1->CCR1 |= 5; 			// HIGH for 50ns (duty-cycle=50%)
+	TIM1->CCR1 |= (TIM1_ticks + 1) / 2; 		// HIGH for 50ns (duty-cycle=50%)
 	// capture mode enabled, active high and configure channel as output
 	TIM1->CCER |= TIM_CCER_CC1E;
 	// PWM mode 1 (active: CNT<CCR1, else inactive) (mode: 0b0110)

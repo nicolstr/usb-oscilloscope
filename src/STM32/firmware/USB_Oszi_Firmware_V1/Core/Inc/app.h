@@ -16,6 +16,7 @@
 #define NUMBER_OF_ROWS 1
 #define NUMBER_OF_COLUMNS 2
 #define NUM_OF_TRANSFERS_PER_TRANSACTION 50000
+#define NUM_OF_SAMPLES (NUMBER_OF_ROWS*NUMBER_OF_COLUMNS*NUM_OF_TRANSFERS_PER_TRANSACTION)
 
 /* TYPEDEFS */
 
@@ -32,13 +33,21 @@ void reInit_DMA();
 void setOnboardStatusLEDs(uint8_t status);
 
 void configureSamplingFrequency();
+void configureReferenceVoltage();
 void configureTrigger(TRIGGERMODE_T triggerMode);
 void enableTrigger();
 void disableTrigger();
 void manualTrigger();
+void configureMovAvgFilter();
+
+void preprocessData();
 
 void sendData();
 void usbRxCallback(uint8_t* Buf, uint32_t *Len);
 void sendCommand(const char* command);
+
+void sendCurrentSamplingFrequency();
+void sendCurrentReferenceVoltage();
+void sendCurrentTriggerMode();
 
 #endif /* APP_H_ */

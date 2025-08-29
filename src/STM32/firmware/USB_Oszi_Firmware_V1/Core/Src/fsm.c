@@ -171,6 +171,10 @@ static void fsm_state_idle(fsm_t *fsm, uint8_t event){
     	configureSamplingFrequency();
     	sendCurrentSamplingFrequency();
     	break;
+    case EV_CONFIGURE_REF_VOLT:
+    	configureReferenceVoltage();
+    	sendCurrentReferenceVoltage();
+    	break;
     case EV_CONFIGURE_TRIG_RISE_EDGE:
     	configureTrigger(TRIGGER_RISING_EDGE);
     	sendCurrentTriggerMode();
@@ -178,6 +182,10 @@ static void fsm_state_idle(fsm_t *fsm, uint8_t event){
     case EV_CONFIGURE_TRIG_FALL_EDGE:
     	configureTrigger(TRIGGER_FALLING_EDGE);
     	sendCurrentTriggerMode();
+        break;
+    case EV_CONFIGURE_MOV_AVG:
+    	configureMovAvgFilter();
+    	sendCurrentNumOfPoints();
         break;
     case EV_SAMPL_RUN_START:
         fsm_transition(fsm, fsm_state_acquisition_start);
@@ -221,6 +229,8 @@ static void fsm_state_acquisition_done(fsm_t *fsm, uint8_t event){
     	sendCommand("STATE:ACQUISITION_DONE");
     	disableTrigger();
     	reInit_DMA();
+    	/* preprocess data before transmission*/
+    	preprocessData();
         break;
     case EV_SAMPL_RDY_FOR_DATA:
         fsm_transition(fsm, fsm_state_data_transmission);
@@ -238,7 +248,7 @@ static void fsm_state_data_transmission(fsm_t *fsm, uint8_t event){
     case EV_ENTRY:
         /* State entry actions */
     	setOnboardStatusLEDs(5);
-    	sendCommand("STATE:TRANSMISSION");
+    	//sendCommand("STATE:TRANSMISSION");	currently not checked by PC application
     	// send data
     	sendData();
         break;
