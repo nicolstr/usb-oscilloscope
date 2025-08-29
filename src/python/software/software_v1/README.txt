@@ -1,4 +1,6 @@
 1. Install python3 interpreter (working version example: Python 3.13.2).
+   
+   Make sure to check option Add Python 3.5 to PATH.
 
 2. Install required python packages with pip:
       
