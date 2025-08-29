@@ -1,0 +1,7 @@
+python-statemachine
+pandas
+numpy
+matplotlib
+scipy
+PySide6
+pyserial
