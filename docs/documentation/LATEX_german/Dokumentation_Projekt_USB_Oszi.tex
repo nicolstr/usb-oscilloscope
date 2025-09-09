@@ -1,0 +1,221 @@
+% Ersteller: 	Daniel Wirth
+% Software:	TeX-Distribution --> MiKTeX (https://miktex.org/); Editor --> Texmaker (https://www.xm1math.net/texmaker/)
+% Literatur:	.bib erstellt mit JabRef (https://www.jabref.org/); %Achtung: bilatex-mode verwenden (preferences) und dann .bib-file erstellen; Engine --> biber
+% Der nachfolgende Praxisbericht wurde für das Praxisseminar im Studiengang BEI angefertigt.
+%
+
+\documentclass[a4paper, portrait, 12pt]{scrartcl} % Vorgabe TH Nbg
+%%%%%%%%%%% Präambel %%%%%%%%%%%
+
+% Standardpakete
+%\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage[left=3cm, right=2cm]{geometry} % Vorgabe TH Nbg
+\usepackage{graphicx}
+\graphicspath{ {./Abbildungen/} }
+\usepackage{amsmath,amsfonts}
+\usepackage{siunitx}
+\usepackage{textcomp} % €
+\usepackage[dvipsnames]{xcolor}
+\usepackage{xspace} % Sorgt dafür, dass Leerzeichen hinter parameterlosen Makros nicht als Makroendezeichen interpretiert werden
+
+% Formatierung etc.: Allgemein
+\usepackage{setspace}
+\onehalfspacing % Vorgabe TH Nbg
+%\spacing{1.X}
+\setlength{\parindent}{0pt} % Kein Einzug
+\usepackage{afterpage}
+\usepackage{lastpage}
+\usepackage{fancyhdr} % Für beliebige Kopf- und Fußzeilen
+\pagestyle{fancy}
+\fancyhf{} % Löscht vorherige Einstellungen - Gesamt
+%\fancyhead{} % Löscht voherige Einstellungen
+%\fancyfoot{} % Dito
+\renewcommand{\headrulewidth}{0 pt} % Keine obere Trennlinie
+%\(this)pagestyle{empty} % Keine Seitenzahlen
+%\setcounter{page}{n} % Bestimme Seite mit n bezeichnen, nachfolgende ist dann n+1
+\rfoot{\thepage\ von \pageref{LastPage}} % Seite x von y; Vorgabe TH Nbg
+\usepackage{enumitem}
+
+
+% Formatierung etc.: Schrift
+\usepackage{lmodern} % bessere Fonts
+%\usepackage{ulem} % Unterstreichen
+\usepackage{relsize} % Schriftgröße relativ festlegen
+
+
+% Formatierung etc.: Tabellen/Arrays
+%\usepackage{tabularx} % "Einfacher Tabllen gestalten"
+%\usepackage{adjustbox}
+\usepackage{caption} % Beschriftung von Bildern/Tabellen
+\usepackage{subcaption} % Analog zu oben
+%\setlength{\topsep}{0pt} % Kein xtra Abstand über Tabulator	
+%\setlength{\partopsep}{0pt} % Kein xtra Abstand unter Tabulator	
+
+
+% Hyperlinks und URLs etc.
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=MidnightBlue, citecolor=black}
+\urlstyle{same}
+
+
+% Graphiken, Plots, PDFs etc.
+%!TEX root = name.tex % Andere .tex-Datei einbinden
+\usepackage{pdfpages}
+\usepackage{float}
+\usepackage{wrapfig}
+%\usepackage{pgfplots}
+%\pgfplotsset{width=10cm,compat=1.9} % Zweiten Parameter nicht verändern!
+
+
+% Rechtschreibung bzw. Trennung
+%\hyphenchar\font=\string"7F % Nötig für korrekte Silbentrennung!
+%\hyphenation{Kom-pli-ziert-es-Wort}
+%\hyphenpenalty = XXX
+%\tolerance = XXX
+
+
+% Mathe
+%\usepackage{aligned-overset}
+%\usepackage{mathabx} %\widehat{•} & \widecheck{}
+
+
+% "Speziellere" Befehle
+%\newcommand{\forceindent}{\leavevmode{\parindent=1.5em\indent}}
+
+
+% Bibliographie
+\usepackage[style=alphabetic, backend=biber]{biblatex}  
+\usepackage{csquotes} % Für Anführungszeichen bei Zitaten
+\addbibresource{Bibliographie_Projekt_USB_Oszi.bib}
+%\usepackage[nohyperlinks, printonlyused]{acronym} % Abkürzungsverzeichnis
+
+
+\title{Projekt USB-Oszilloskop}
+\author{Samuel Oeser, Nicole Sturm, Daniel Wirth}
+\date{\today}
+
+
+%%%%%%%%%%% Main %%%%%%%%%%%
+\begin{document}
+
+%%%%%%%%%%% Deckblatt %%%%%%%%%%%
+\maketitle
+%\thispagestyle{empty}
+\pagebreak
+
+%%%%%%%%%%% TOC %%%%%%%%%%%
+%\thispagestyle{empty}
+\tableofcontents
+\pagebreak
+
+%%%%%%%%%%% Abstract / Zusammenfassung %%%%%%%%%%%
+\section{Abstract / Zusammenfassung}
+
+\pagebreak
+
+%%%%%%%%%%% Einleitung %%%%%%%%%%%
+\section{Einleitung}
+
+\pagebreak
+
+%%%%%%%%%%% Fachliche Grundlagen %%%%%%%%%%%
+\section{Fachliche Grundlagen}
+
+\subsection{Allgemeiner Aufbau eines DSOs}
+Mühl: \cite[Abb. 14.1]{Muehl2020}
+\subsection{Leitungsimpedanzanpassung}
+
+\subsection{ADC-Topologien}
+
+\subsection{AAF-Entwurf (Nyquisttheorem)}
+
+\subsection{Frequenzkompensierter Spannungsteiler}
+Schrüfer: \cite[S. 114ff]{Schruefer2022}
+\subsection{Zustandsautomat (Finite State-Machine - FSM)}
+
+\subsection{Direct Memory Access - DMA}
+
+\subsection{Digitale Filterung (Preprocessing)}
+
+\pagebreak
+
+%%%%%%%%%%% Projektkonzeption %%%%%%%%%%%
+\section{Projektkonzeption}
+
+\subsection{Vorgehensweise}
+
+\subsection{Anforderungen}
+
+\subsection{Konzept}
+
+
+\pagebreak
+
+%%%%%%%%%%% Realisierung %%%%%%%%%%%
+\section{Realisierung}
+
+\subsection{Hardware (HW)}
+\subsubsection{Entwurf}
+\subsubsection{Implementierung}
+\subsubsection{HW-Test}
+
+\subsection{Schnittstelle Hardware - Firmware}
+
+
+\subsection{Firmware (FW)}
+\subsubsection{Entwurf}
+\subsubsection{Implementierung}
+\subsubsection{FW-Test}
+
+\subsection{Schnittstelle Firmware - Software}
+
+\subsection{Software (SW)}
+
+\subsection{Zusammenführung}
+\subsubsection{Entwurf}
+\subsubsection{Implementierung}
+\subsubsection{SW-Test}
+
+\pagebreak
+
+%%%%%%%%%%% Schluss %%%%%%%%%
+
+\pagebreak
+
+%%%%%%%%%%% Ergebnisse %%%%%%%%%%%
+\section{Ergebnisse}
+
+\pagebreak
+
+%%%%%%%%%%% Fazit und Ausblick %%%%%%%%%%%
+\section{Fazit und Ausblick}
+
+\pagebreak
+
+%%%%%%%%%%% Literaturverzeichnis %%%%%%%%%%%
+\section{Literaturverzeichnis}
+\printbibliography
+\pagebreak
+
+%%%%%%%%%%% Abbildungsverzeichnis %%%%%%%%%%%
+\section{Abbildungsverzeichnis}
+\listoffigures
+\pagebreak
+
+%%%%%%%%%%% Abkürzungsverzeichnis %%%%%%%%%%%
+%\section{Abkürungsverzeichnis}
+
+%\begin{acronym}
+%\acro{Abk.}{Abkürzung} % Im Text mit \ac{Abk.} verwenden
+%\end{acronym}
+
+%\pagebreak
+
+%%%%%%%%%%% Anhang %%%%%%%%%%%
+\appendix
+\section{Anhang}
+
+  
+\end{document}

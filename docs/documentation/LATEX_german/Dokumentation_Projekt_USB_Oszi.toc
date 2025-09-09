@@ -1,0 +1,38 @@
+\babel@toc {ngerman}{}\relax 
+\contentsline {section}{\numberline {1}Abstract / Zusammenfassung}{4}{section.1}%
+\contentsline {section}{\numberline {2}Einleitung}{5}{section.2}%
+\contentsline {section}{\numberline {3}Fachliche Grundlagen}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Allgemeiner Aufbau eines DSOs}{6}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Leitungsimpedanzanpassung}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}ADC-Topologien}{6}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}AAF-Entwurf (Nyquisttheorem)}{6}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Frequenzkompensierter Spannungsteiler}{6}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Zustandsautomat (Finite State-Machine - FSM)}{6}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Direct Memory Access - DMA}{6}{subsection.3.7}%
+\contentsline {subsection}{\numberline {3.8}Digitale Filterung (Preprocessing)}{6}{subsection.3.8}%
+\contentsline {section}{\numberline {4}Projektkonzeption}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Vorgehensweise}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Anforderungen}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Konzept}{7}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Realisierung}{8}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Hardware (HW)}{8}{subsection.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.1}Entwurf}{8}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}Implementierung}{8}{subsubsection.5.1.2}%
+\contentsline {subsubsection}{\numberline {5.1.3}HW-Test}{8}{subsubsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.2}Schnittstelle Hardware - Firmware}{8}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Firmware (FW)}{8}{subsection.5.3}%
+\contentsline {subsubsection}{\numberline {5.3.1}Entwurf}{8}{subsubsection.5.3.1}%
+\contentsline {subsubsection}{\numberline {5.3.2}Implementierung}{8}{subsubsection.5.3.2}%
+\contentsline {subsubsection}{\numberline {5.3.3}FW-Test}{8}{subsubsection.5.3.3}%
+\contentsline {subsection}{\numberline {5.4}Schnittstelle Firmware - Software}{8}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Software (SW)}{8}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Zusammenführung}{8}{subsection.5.6}%
+\contentsline {subsubsection}{\numberline {5.6.1}Entwurf}{8}{subsubsection.5.6.1}%
+\contentsline {subsubsection}{\numberline {5.6.2}Implementierung}{8}{subsubsection.5.6.2}%
+\contentsline {subsubsection}{\numberline {5.6.3}SW-Test}{8}{subsubsection.5.6.3}%
+\contentsline {section}{\numberline {6}Ergebnisse}{9}{section.6}%
+\contentsline {section}{\numberline {7}Fazit und Ausblick}{10}{section.7}%
+\contentsline {section}{\numberline {8}Literaturverzeichnis}{11}{section.8}%
+\contentsline {section}{\numberline {9}Abbildungsverzeichnis}{12}{section.9}%
+\contentsline {section}{\numberline {A}Anhang}{13}{appendix.A}%
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
