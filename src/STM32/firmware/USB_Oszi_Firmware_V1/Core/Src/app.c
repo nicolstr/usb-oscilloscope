@@ -914,6 +914,8 @@ static int determineBufferAddresses(uint16_t buf[], uint32_t bufSize, uint32_t* 
  * initialization of TIM1
  * TIM1 used for triggering DMA transfers
  * and creating a clock signal on PE9 (both are synchronous)
+ * transmission is done on falling edge of clock signal (avoid setup-hold-violation)
+ *
  *	 													*/
 static void TIM1_Init()
 {
@@ -935,8 +937,8 @@ static void TIM1_Init()
 	// set Capture/Compare register value
 	TIM1->CCR1 &= ~(0xFFFF);
 	TIM1->CCR1 |= (TIM1_ticks + 1) / 2; 		// HIGH for 50ns (duty-cycle=50%)
-	// capture mode enabled, active high and configure channel as output
-	TIM1->CCER |= TIM_CCER_CC1E;
+	// capture mode enabled  and configure channel as output (polarity: active low !!!)
+	TIM1->CCER |= TIM_CCER_CC1E|TIM_CCER_CC1P;
 	// PWM mode 1 (active: CNT<CCR1, else inactive) (mode: 0b0110)
 	TIM1->CCMR1 &= ~(TIM_CCMR1_OC1M);
 	TIM1->CCMR1 |= TIM_CCMR1_OC1M_2|TIM_CCMR1_OC1M_1;
