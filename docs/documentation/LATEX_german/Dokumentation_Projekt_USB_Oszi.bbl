@@ -19,6 +19,39 @@
 
 \refsection{0}
   \datalist[entry]{anyt/global//global/global/global}
+    \entry{Baesig2019}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=9c17c033f9c24edab66c410d6fa8785c}{%
+           family={Bäsig},
+           familyi={B\bibinitperiod},
+           given={Prof.\bibnamedelimi Dr.-Ing.\bibnamedelimi J.},
+           giveni={P\bibinitperiod\bibinitdelim D\bibinithyphendelim I\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {TH Nürnberg}%
+      }
+      \list{publisher}{1}{%
+        {TH Nürnberg}%
+      }
+      \strng{namehash}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{fullhash}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{fullhashraw}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{bibnamehash}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{authorbibnamehash}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{authornamehash}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{authorfullhash}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{authorfullhashraw}{9c17c033f9c24edab66c410d6fa8785c}
+      \field{labelalpha}{Bäs19}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{12}
+      \field{subtitle}{Skriptum zur Vorlesung Informatik 2}
+      \field{title}{Automaten und ihre Anwendung}
+      \field{year}{2019}
+      \field{dateera}{ce}
+    \endentry
     \entry{Muehl2020}{book}{}{}
       \name{author}{1}{}{%
         {{hash=a1bf5f9645350d583e9193cb846da370}{%
@@ -70,7 +103,7 @@
            giveni={B\bibinitperiod}}}%
       }
       \list{publisher}{1}{%
-        {Carl Hanser Verlag GmbH & Co. KG}%
+        {Carl Hanser Verlag GmbH \& Co. KG}%
       }
       \strng{namehash}{0f0da3b079dc3340b758d84c5d2faec4}
       \strng{fullhash}{0f0da3b079dc3340b758d84c5d2faec4}
@@ -93,6 +126,109 @@
       \verb{doi}
       \verb 10.3139/9783446474437
       \endverb
+    \endentry
+    \entry{STmicroelectronics2016}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=38a05b7ed659e57ad7f9e75520419350}{%
+           family={STmicroelectronics},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{fullhash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{fullhashraw}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{bibnamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorbibnamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authornamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorfullhash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorfullhashraw}{38a05b7ed659e57ad7f9e75520419350}
+      \field{extraname}{1}
+      \field{labelalpha}{STm16}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{6}
+      \field{title}{AN4031 - Using the STM32F2, STM32F4 and STM32F7 Series DMA controller}
+      \field{urlday}{11}
+      \field{urlmonth}{9}
+      \field{urlyear}{2025}
+      \field{year}{2016}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.st.com/resource/en/application_note/dm00046011-using-the-stm32f2-stm32f4-and-stm32f7-series-dma-controller-stmicroelectronics.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.st.com/resource/en/application_note/dm00046011-using-the-stm32f2-stm32f4-and-stm32f7-series-dma-controller-stmicroelectronics.pdf
+      \endverb
+    \endentry
+    \entry{STmicroelectronics2024}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=38a05b7ed659e57ad7f9e75520419350}{%
+           family={STmicroelectronics},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{fullhash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{fullhashraw}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{bibnamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorbibnamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authornamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorfullhash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorfullhashraw}{38a05b7ed659e57ad7f9e75520419350}
+      \field{extraname}{2}
+      \field{labelalpha}{STm24}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{7}
+      \field{title}{STM32F76xxx and STM32F77xxx advanced Arm®-based 32-bit MCUs}
+      \field{urlday}{11}
+      \field{urlmonth}{9}
+      \field{urlyear}{2025}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.st.com/resource/en/reference_manual/rm0410-stm32f76xxx-and-stm32f77xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.st.com/resource/en/reference_manual/rm0410-stm32f76xxx-and-stm32f77xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
+      \endverb
+    \endentry
+    \entry{Urbanek2020}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=6429fe0231e97be140dbae913d6b5296}{%
+           family={Urbanek},
+           familyi={U\bibinitperiod},
+           given={Prof.\bibnamedelimi Dr.\bibnamedelimi Peter},
+           giveni={P\bibinitperiod\bibinitdelim D\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {TH Nürnberg}%
+      }
+      \list{publisher}{1}{%
+        {TH Nürnberg}%
+      }
+      \strng{namehash}{6429fe0231e97be140dbae913d6b5296}
+      \strng{fullhash}{6429fe0231e97be140dbae913d6b5296}
+      \strng{fullhashraw}{6429fe0231e97be140dbae913d6b5296}
+      \strng{bibnamehash}{6429fe0231e97be140dbae913d6b5296}
+      \strng{authorbibnamehash}{6429fe0231e97be140dbae913d6b5296}
+      \strng{authornamehash}{6429fe0231e97be140dbae913d6b5296}
+      \strng{authorfullhash}{6429fe0231e97be140dbae913d6b5296}
+      \strng{authorfullhashraw}{6429fe0231e97be140dbae913d6b5296}
+      \field{labelalpha}{Urb20}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{subtitle}{Vom Mikrochip zum Rechnersystem. Ein Grundlagenbuch mit vielen Beispielen.}
+      \field{title}{Das MCT Skript}
+      \field{titleaddon}{Version 3.5}
+      \field{year}{2020}
+      \field{dateera}{ce}
     \endentry
   \enddatalist
 \endrefsection

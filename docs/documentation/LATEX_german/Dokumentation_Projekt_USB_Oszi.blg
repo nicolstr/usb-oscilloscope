@@ -1,15 +1,15 @@
 [0] Config.pm:308> INFO - This is Biber 2.20
 [0] Config.pm:311> INFO - Logfile is 'Dokumentation_Projekt_USB_Oszi.blg'
-[142] biber-MSWIN64:340> INFO - === 
-[169] Biber.pm:420> INFO - Reading 'Dokumentation_Projekt_USB_Oszi.bcf'
-[254] Biber.pm:994> INFO - Found 2 citekeys in bib section 0
-[265] Biber.pm:4463> INFO - Processing section 0
-[276] Biber.pm:4654> INFO - Looking for bibtex file 'Bibliographie_Projekt_USB_Oszi.bib' for section 0
-[315] bibtex.pm:1713> INFO - LaTeX decoding ...
-[324] bibtex.pm:1519> INFO - Found BibTeX data source 'Bibliographie_Projekt_USB_Oszi.bib'
-[400] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[400] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'variable = shifted' with 'variable = non-ignorable'
-[400] Biber.pm:4283> INFO - Sorting list 'anyt/global//global/global/global' of type 'entry' with template 'anyt' and locale 'de-DE'
-[400] Biber.pm:4289> INFO - No sort tailoring available for locale 'de-DE'
-[403] bbl.pm:676> INFO - Writing 'Dokumentation_Projekt_USB_Oszi.bbl' with encoding 'UTF-8'
-[404] bbl.pm:779> INFO - Output to Dokumentation_Projekt_USB_Oszi.bbl
+[93] biber-MSWIN64:340> INFO - === 
+[122] Biber.pm:420> INFO - Reading 'Dokumentation_Projekt_USB_Oszi.bcf'
+[211] Biber.pm:994> INFO - Found 6 citekeys in bib section 0
+[224] Biber.pm:4463> INFO - Processing section 0
+[234] Biber.pm:4654> INFO - Looking for bibtex file 'Bibliographie_Projekt_USB_Oszi.bib' for section 0
+[272] bibtex.pm:1713> INFO - LaTeX decoding ...
+[279] bibtex.pm:1519> INFO - Found BibTeX data source 'Bibliographie_Projekt_USB_Oszi.bib'
+[352] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'variable = shifted' with 'variable = non-ignorable'
+[352] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[352] Biber.pm:4283> INFO - Sorting list 'anyt/global//global/global/global' of type 'entry' with template 'anyt' and locale 'de-DE'
+[352] Biber.pm:4289> INFO - No sort tailoring available for locale 'de-DE'
+[361] bbl.pm:676> INFO - Writing 'Dokumentation_Projekt_USB_Oszi.bbl' with encoding 'UTF-8'
+[364] bbl.pm:779> INFO - Output to Dokumentation_Projekt_USB_Oszi.bbl
