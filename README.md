@@ -8,3 +8,6 @@ which was carried out in the summer semester 2025 at the efi faculty of the Univ
 HW - hardware\
 FW - firmware\
 SW - software
+
+### Documentation:
+PDF [GER]: [Dokumentation_Projekt_USB_Oszi.pdf](docs/documentation/LATEX_german/Dokumentation_Projekt_USB_Oszi.pdf)

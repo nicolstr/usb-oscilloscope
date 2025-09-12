@@ -146,12 +146,12 @@ Mühl: \cite[Abb. 14.1]{Muehl2020}
 Schrüfer: \cite[S. 114ff]{Schruefer2022}
 \pagebreak
 
-\subsection{Zustandsautomaten (Finite State-Machines - FSMs)}
+\subsection{Endliche Zustandsautomaten (Finite State-Machines - FSMs)}
 Die Firmware und Software des Projekts sind als synchronisierte Zustandsautomaten implementiert, um einen deterministischen Ablauf der beiden Programme zu gewährleisten.
 \subsubsection{Definition und formale Darstellung}
 Ein endlicher Automat (EA - engl. Finite State Machine, FSM) ist ein abstraktes Rechenmodell zur Beschreibung von Systemen. Dieser befindet sich in mindestens einem Zustand von einer Zahl endlicher Zustände. Zustandsübergänge (sog. Transitionen) erfolgen durch Eingaben oder das Auftreten von Ereignissen (spezielle Form der Eingabe).\\
 
-Zustände modellieren, was das System gerade tut bzw. in welchem internen ``Modus`` es sich befindet; Ereignisse sorgen für den Wechsel zwischen Zuständen; Übergänge definieren, wie das System im aktuellen Zustand auf ein Ereignis reagiert.
+Zustände modellieren, was das System gerade tut bzw. in welchem internen ``Modus`` es sich befindet. Ereignisse sorgen für den Wechsel zwischen Zuständen. Übergänge definieren, wie das System im aktuellen Zustand auf ein Ereignis reagiert.
 
 Ein FSM besteht nach \cite[S. 7ff]{Baesig2019} typischerweise aus:
 \begin{itemize}
@@ -170,12 +170,13 @@ Unterschieden werden folgende Arten von Endlichen Automaten:
 \begin{itemize}
 	\item \emph{Deterministische Endliche Automaten (DEA)}:\\
 	Ein Automat wird als deterministisch bezeichnet, wenn für jede Kombination aus Eingabedaten und aktuellem Zustand eindeutig festgelegt ist, welcher Folgezustand erreicht wird. Das bedeutet, dass sich das \emph{System zu einem bestimmten Zeitpunkt stets in genau einem definierten Zustand} befindet.
-	\item \emph{Nichtdeterministische Endliche Automaten (NEA)}: Bei einem NEA sind für einen bestimmten Zustand und eine Eingabe keine, genau ein oder mehrere mögliche Zustandsübergänge definiert.
+	\item \emph{Nichtdeterministische Endliche Automaten (NEA)}:\\
+	Bei einem NEA sind für einen bestimmten Zustand und eine Eingabe keine, genau ein oder mehrere mögliche Zustandsübergänge definiert.
 \end{itemize}
 
-DEAs sind einfach als NEAs zu implementieren, wodurch diese in der Praxis häufiger zur Anwendung kommen. Im Projekt sind die FSMs als DEAs ausgeführt (vgl. \cite[S. 14]{Baesig2019}).\\
+DEAs sind einfacher als NEAs zu implementieren, wodurch diese in der Praxis häufiger zur Anwendung kommen (vgl. \cite[S. 14]{Baesig2019}). Im Projekt sind die FSMs als DEAs ausgeführt .\\
 
-Eine weitere Aufgliederung von DEAs erfolgt (wenn vorhanden) nach der Abhängigkeit der Ausgabe (vgl. \cite[S. 8f]{Baesig2019}).
+Eine weitere Aufgliederung von DEAs erfolgt nach der Abhängigkeit der Ausgabe, wenn diese vorhanden ist (vgl. \cite[S. 8f]{Baesig2019}).
 \begin{itemize}
 	\item Wenn die Ausgabe nur vom aktuellen Zustand abhängt, handelt es sich um einen \emph{Moore-Automaten}.
 	\item Wenn die Ausgabe vom aktuellen Zustand \underline{und} der Eingabe abhängt, handelt es sich um einen \emph{Mealy-Automaten}.
@@ -186,7 +187,7 @@ Im Projekt kommen Moore-Automaten zur Anwendung.
 
 Die Darstellung eines Zustandsautomaten erfolgt üblicherweise mit einem \emph{Zustandsdiagramm} (auch Zustandsübergangsdiagramm), einem gerichteten Graph\footnote{ ``Graphen sind ein [...] Konzept, um Objekte und die Beziehung zwischen diesen darzustellen.``\\Quelle: \href{https://www.tu-chemnitz.de/informatik/theoretische-informatik/TI-1/lecture-notes/06-00-graphs.html}{[Link]}}. Die Knoten stellen die Zustände der Menge $S$ dar und die gerichteten Kanten die Zustandsübergänge. Der Startzustand und die Endzustände werden gesondert gekennzeichnet. Eine übliche Darstellung für einen einfachen Moore-Automaten findet sich in \autoref{fig:statediagram_example}a (\emph{sn} sind die Zustände, \emph{xn} sind Eingaben oder Ereignisse und \emph{yn} sind Ausgaben) (vgl. \cite[S. 9]{Baesig2019}).\\
 
-Die Darstellung des Zustandsdiagramms ist auch als Teil der \emph{Unified Modelling Language (UML)}\footnote{aktueller UML-Standard (V2.5.1): \href{https://www.omg.org/spec/UML/2.5.1/About-UML}{[Link]}} festgelegt, welche auch durch internationale Normung festgeschrieben ist. In der Praxis (vor allem beim händischen Entwurf von Zustandsdiagrammen) hat sich aber ein Mischform bewährt, welche aber auf einige Elemente der UML-Variante zurückgreift (siehe \autoref{fig:statediagram_example}b). Es lassen sich beispielsweise auch hierarchische Strukturen integrieren (verschachtelte Zustände).
+Die Darstellung des Zustandsdiagramms ist auch als Teil der \emph{Unified Modelling Language (UML)}\footnote{aktueller UML-Standard (V2.5.1): \href{https://www.omg.org/spec/UML/2.5.1/About-UML}{[Link]}} festgelegt, welche auch durch internationale Normung festgeschrieben ist. In der Praxis (vor allem beim händischen Entwurf von Zustandsdiagrammen) hat sich aber ein Mischform bewährt, welche auf einige Elemente der UML zurückgreift (siehe \autoref{fig:statediagram_example}b). Es lassen sich beispielsweise auch hierarchische Strukturen integrieren (verschachtelte Zustände).
 
 \begin{figure}[H]
 	\centering
@@ -201,9 +202,9 @@ Die Darstellung des Zustandsdiagramms ist auch als Teil der \emph{Unified Modell
 	\item \emph{Deterministisches Verhalten}\\
 	Durch die Definitionen, wie auf welches Ereignis reagiert wird, kann die Vorhersagbarkeit und Zuverlässigkeit gewährleistet werden. Außerdem lassen sich undefinierte Zustände durch die explizite Modellierung vermeiden.
 	\item \emph{Modularisierung \& Wiederverwendbarkeit}\\
-	Einzelne Zustände oder Teile der FSM lassen sich kapseln, segmentieren und wiederverwenden; Teilbereiche können eventuell separat getestet werden.
+	Einzelne Zustände oder Teile der FSM lassen sich kapseln, segmentieren und wiederverwenden. Teilbereiche können eventuell separat getestet werden.
 	\item \emph{Wartbarkeit \& Erweiterbarkeit}\\
-	Das System lässt sich durch Hinzufügen neuer Zustände oder neue Übergänge modular erweitern, ohne die vorhandene Logik stark zu verändern.
+	Das System lässt sich durch Hinzufügen neuer Zustände oder neuer Übergänge modular erweitern, ohne die vorhandene Logik stark zu verändern.
 	\item \emph{Kommunikation und Dokumentation}\\
 	Zustandsdiagramme können bei der Vermittlung von komplexem Programmverhalten gegenüber Nicht-Programmieren genutzt werden.
 	\item \emph{Verbessertes Debugging}\\
@@ -212,10 +213,10 @@ Die Darstellung des Zustandsdiagramms ist auch als Teil der \emph{Unified Modell
 
 \subsection{Direct Memory Access - DMA}
 \subsubsection{Allgemeines}
-DMA bezeichnet den Vorgang, bei dem  ohne Beteiligung einer CPU´(also als Hintergrundprozess) Daten transferiert werden. Er kommt zum Einsatz, wenn große Datenmengen von der Peripherie oder einem Speicher zu einem anderen transferiert werden müssen. Ein Chip, oder eine teileinheit eines µC, die solche Transfers durchführt heißt \emph{Direct Memory Access Controler (DMAC)} (vgl. \cite[S. 125]{Urbanek2020}). Im Folgenden soll die Funktionsweise anhand der Realisierung in der, im Projekt verwendeten, STM32-Mikrocontrollerfamilie erläutert werden.
+DMA bezeichnet den Vorgang, bei dem durch eine dedizierte Einheit ohne Beteiligung einer CPU Daten transferiert werden (also als Hintergrundprozess). Er kommt zum Einsatz, wenn große Datenmengen von der Peripherie oder einem Speicher zu einem anderen transferiert werden müssen. Ein Chip oder eine Teileinheit eines µC, die solche Transfers durchführt, heißt \emph{Direct Memory Access Controller (DMAC)} (vgl. \cite[S. 125]{Urbanek2020}). Im Folgenden soll die Funktionsweise anhand der Realisierung in der im Projekt verwendeten STM32-Mikrocontrollerfamilie erläutert werden.
 
 \subsubsection{DMA bei STM32-Mikrocontrollern}
-Der DMA-Controller ist ein AHB-Modul (AHB - advanced high-performance bus; standardisiertes Bussystem von ARM) und kann wie auch die CPU des Mikrocontrollers (µCs) als Master auf diesen Bus (genauer auf die Bus-Matrix) zugreifen. Durch die Datentransfers, welcher der DMAC nach seiner Konfiguration ohne CPU-Beteiligung ermöglicht, kann die System-Performance deutlich erhöht werden. Die Datentransfers können hierbei per Software oder über angeschlossene Peripherieelemente über sog. \emph{Requests} gestartet werden. Wird als steuerndes Element beispielsweise ein Hardware-Timer genutzt ermöglicht dies die zeitlich exakte Taktung von Datentransfers \cite[S. 6]{STmicroelectronics2016}, was im Projekt für den Abtastvorgang benötigt wird.
+Der DMA-Controller ist ein AHB-Modul (AHB - advanced high-performance bus; standardisiertes Bussystem von ARM) und kann wie auch die CPU des Mikrocontrollers (µCs) als Master auf diesen Bus (genauer auf die Bus-Matrix) zugreifen. Durch die Datentransfers, welcher der DMAC nach seiner Konfiguration ohne CPU-Beteiligung ermöglicht, kann die System-Performance deutlich erhöht werden. Die Datentransfers können hierbei per Software oder über angeschlossene Peripherieelemente über sog. \emph{Requests} gestartet werden. Wird als steuerndes Element beispielsweise ein Hardware-Timer genutzt ermöglicht dies die zeitlich exakte Taktung von Datentransfers \cite[S. 6]{STmicroelectronics2016}, was im Projekt für den Abtastvorgang genutzt wird.
 
 \begin{figure}[H]
 	\centering
@@ -235,9 +236,9 @@ Der DMAC besitzt 3 Schnittstellen:
 	\end{itemize}
 \end{itemize}
 
-Jeder Controller besitzt 8 Datenwege (\emph{``Streams``}), die separat für unterschiedliche Datentransfers konfiguriert werden können (die Transfers können aber nicht gleichzeitig laufen). Die Streams besitzen hierbei eine Priorität und ein zentrales Modul, der \emph{``Arbiter``}, regelt den Zugriff der Streams auf die Ports in Abhängigkeit der Priorität und sorgt für einen deterministischen Ablauf der Transfers. Die einzelnen Streams besitzen noch eine Anzahl an \emph{Channeln}, über die der entsprechende Peripherie-Request für einen Stream ausgewählt werden kann (vgl. \cite[S. 7ff]{STmicroelectronics2016}). Die Zuordnung eines Peripheri-Requests zu einer Channel-Stream-Kombination kann dem Reference-Manual des Controllers entnommen werden (für den STM32F767: \cite[S. 252]{STmicroelectronics2024}).\\
+Jeder Controller besitzt 8 Datenwege (\emph{Streams}), die separat für unterschiedliche Datentransfers konfiguriert werden können (die Transfers können aber nicht gleichzeitig laufen). Die Streams besitzen hierbei eine konfigurierbare Priorität und ein zentrales Modul, der \emph{Arbiter}, regelt den Zugriff der Streams auf die Ports in Abhängigkeit der Priorität und sorgt für einen deterministischen Ablauf der Transfers. Die einzelnen Streams besitzen noch eine Anzahl an \emph{Channeln}, über die der entsprechende Peripherie-Request für einen Stream ausgewählt werden kann (vgl. \cite[S. 7ff]{STmicroelectronics2016}). Die Zuordnung eines Peripherie-Requests zu einer Channel-Stream-Kombination kann dem Reference-Manual des Controllers entnommen werden (für den STM32F767: \cite[S. 252]{STmicroelectronics2024}).\\
 
-Jeder Stream besitzt außerdem einen 4-stufige \emph{FIFO}-Pufferspeicher (First-In-First-Out), welcher Latenzen beim Zugriff auf das Übertragungsmedium (Bus-Switch-Matrix) überbrücken kann und ein \emph{Verpacken/Entpacken der Daten} erlaubt (z.B.: input: 8bit-Pakete, output: 32bit-Pakete).
+Jeder Stream besitzt außerdem einen 4-stufige \emph{FIFO}-Pufferspeicher (First-In-First-Out), welcher Latenzen beim Zugriff auf das Übertragungsmedium (Bus-Switch-Matrix) überbrücken kann und ein \emph{Verpacken/Entpacken der Daten} erlaubt (z.B.: input: 8bit-Pakete, output: 32bit-Pakete; siehe \autoref{fig:dma_fifo}).
 
 \begin{figure}[H]
 	\centering
@@ -257,7 +258,7 @@ Ein Transfer wird zunächst über die \emph{Quelladresse (source address)} und \
 	\label{fig:dma_transfer_inc}
 \end{figure}
 
-Weitere wichtige Parameter sind die Übertragungsgröße (transfer size), die in einem dedizierten Register (NDTR) abgelegt ist, und die Datenbreite (Byte, Half-word, Word). Der Inhalt des NDTR wird nach jedem Transfer entsprechend der Größe des Transfers dekrementiert. Hier wird noch zwischen Circular mode und Normale mode unterschieden. Beim Normal mode ist die Transaction bei NDTR=0 beendet (Stream wird disabled) und es finden bis zum nächsten Aktivieren des Streams keine Transfers mehr statt. Beim Circular mode wird bei NDTR=0 das Register NDTR mit dem Initialwert geladen und die Transfers beginnen erneut (auch die Adressregister werden mit den Initialwerten geladen) $\rightarrow$ Kreislauf (circular).\\
+Weitere wichtige Parameter sind die Übertragungsgröße (transfer size), die in einem dedizierten Register (\emph{NDTR} - Number of Data Transfers Register) abgelegt ist, und die Datenbreite (Byte, Half-word, Word). Der Inhalt des NDTR wird nach jedem Transfer entsprechend der Größe des Transfers dekrementiert. Hier wird noch zwischen Circular mode und Normale mode unterschieden. Beim Normal mode ist eine Transaktion (bestehend aus NDTR Transfers) bei NDTR=0 beendet. Der Stream wird deaktiviert und es finden bis zum nächsten Aktivieren des Streams keine Transfers mehr statt. Beim Circular mode wird bei NDTR=0 das Register NDTR mit dem Initialwert geladen und die Transfers beginnen erneut (auch die Adressregister werden mit den Initialwerten geladen) $\rightarrow$ Kreislauf (circular).\\
 
 Die drei möglichen Transfer-Modi sind:
 \begin{itemize}
@@ -266,7 +267,7 @@ Die drei möglichen Transfer-Modi sind:
 	\item Memory-to-Memory
 \end{itemize}
 
-Bei einem Timer-Überlauf des Hardware-Timers TIM1 findet ein DMA-Request statt (ein Stream wurde entsprechend konfiguriert). Dieser Request löst einen Daten-Transfer zwischen Ziel und Quelle aus (die Datenbreite wurde im Beispiel auf 1 Byte festgelegt). Anschließend werden die Adresse (entsprechend der Datenbreite) inkrementiert, um die Ziel- und Quelladresse für den nächsten Transfer vorzubereiten. Dieser Prozess geschieht so lange, bis ``Number of Transfers`` durchgeführt worden sind (Der Wert von NDTR wird nach dem Transfer dekrementiert), also eine Transaktion beendet ist.\\
+Bei einem Timer-Überlauf des Hardware-Timers TIM1 findet ein DMA-Request statt (ein Stream wurde hierbei entsprechend konfiguriert). Dieser Request löst einen Daten-Transfer zwischen Ziel und Quelle aus (die Datenbreite wurde im Beispiel auf 1 Byte festgelegt). Anschließend werden die Adressen entsprechend der Datenbreite inkrementiert, um die Ziel- und Quelladresse für den nächsten Transfer vorzubereiten. Dieser Prozess geschieht so lange, bis ``Number of Transfers`` durchgeführt worden sind. Der Wert von NDTR wird nach dem Transfer dekrementiert.\\
 
 \begin{figure}[H]
 	\centering
@@ -289,7 +290,7 @@ Im Abtastsystem ist keine Inkrementierung der Quelladresse notwendig, da nur das
 \textbf{\underline{DMA-Transferwege}}\\
 
 Gemeinsames Übertragungsmedium ist die Bus-Switch-Matrix, die auch in den vorherigen Abbildungen schon dargestellt wurde. Der Zugriff auf diese wird mit Hilfe einer Arbitrierung nach einem round-robin-Algorithmus geregelt. 
-Durch den Arbitrierungsvorgang oder die Blockierung des Übertragungsmediums kann eine \emph{Latenz beim DMA-Transfer} entstehen.
+Durch den Arbitrierungsvorgang oder die Blockierung des Übertragungsmediums durch einen anderen Bus-Master (z.B. die CPU) kann eine \emph{Latenz beim DMA-Transfer} entstehen.
 
 \begin{figure}[H]
 	\centering

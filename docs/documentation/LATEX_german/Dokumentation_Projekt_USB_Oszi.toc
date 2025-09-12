@@ -7,7 +7,7 @@
 \contentsline {subsection}{\numberline {3.3}ADC-Topologien}{6}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}AAF-Entwurf (Nyquisttheorem)}{6}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Frequenzkompensierter Spannungsteiler}{6}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Zustandsautomaten (Finite State-Machines - FSMs)}{7}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.6}Endliche Zustandsautomaten (Finite State-Machines - FSMs)}{7}{subsection.3.6}%
 \contentsline {subsubsection}{\numberline {3.6.1}Definition und formale Darstellung}{7}{subsubsection.3.6.1}%
 \contentsline {subsubsection}{\numberline {3.6.2}Modellierung und Darstellung}{8}{subsubsection.3.6.2}%
 \contentsline {subsubsection}{\numberline {3.6.3}Vorteile einer FSM bei der Programmierung}{9}{subsubsection.3.6.3}%

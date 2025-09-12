@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.10.16)  11 SEP 2025 17:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.10.16)  12 SEP 2025 10:46
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1238,16 +1238,16 @@ Underfull \hbox (badness 10000) in paragraph at lines 167--168
 [7{C:/Users/d-wir/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}{
 C:/Users/d-wir/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/U
 sers/d-wir/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]
-Underfull \hbox (badness 10000) in paragraph at lines 176--177
+Underfull \hbox (badness 10000) in paragraph at lines 177--178
 
  []
 
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 187.
+(Font)              <7> on input line 188.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 187.
+(Font)              <5> on input line 188.
 
-Underfull \hbox (badness 10000) in paragraph at lines 187--188
+Underfull \hbox (badness 10000) in paragraph at lines 188--189
 
  []
 
@@ -1255,12 +1255,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 187--188
 File: ../../img/StateDiagram_example.png Graphic file (type png)
 <use ../../img/StateDiagram_example.png>
 Package pdftex.def Info: ../../img/StateDiagram_example.png  used on input line
- 193.
+ 194.
 (pdftex.def)             Requested size: 342.06325pt x 176.81297pt.
 
 
 [8]
-Overfull \hbox (29.92369pt too wide) in paragraph at lines 209--211
+Overfull \hbox (29.92369pt too wide) in paragraph at lines 210--212
 \T1/lmr/m/n/12 Da Zu-stands-über-gän-ge zen-tra-li-siert sind, las-sen sich Log
 -Messages und wei-te-re Debugging-
  []
@@ -1271,86 +1271,86 @@ Overfull \hbox (29.92369pt too wide) in paragraph at lines 209--211
 <../../img/STM32_DMAC.png, id=170, 433.62pt x 340.27126pt>
 File: ../../img/STM32_DMAC.png Graphic file (type png)
 <use ../../img/STM32_DMAC.png>
-Package pdftex.def Info: ../../img/STM32_DMAC.png  used on input line 222.
+Package pdftex.def Info: ../../img/STM32_DMAC.png  used on input line 223.
 (pdftex.def)             Requested size: 225.48369pt x 176.94206pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 227--228
+Underfull \hbox (badness 10000) in paragraph at lines 228--229
 
  []
 
 
 
 [10 <../../img/STM32_DMAC.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 238--239
+Underfull \hbox (badness 10000) in paragraph at lines 239--240
 
  []
 
-<../../img/STM32_DMA_FIFO.png, id=184, 514.92375pt x 106.59825pt>
+<../../img/STM32_DMA_FIFO.png, id=185, 514.92375pt x 106.59825pt>
 File: ../../img/STM32_DMA_FIFO.png Graphic file (type png)
 <use ../../img/STM32_DMA_FIFO.png>
-Package pdftex.def Info: ../../img/STM32_DMA_FIFO.png  used on input line 244.
+Package pdftex.def Info: ../../img/STM32_DMA_FIFO.png  used on input line 245.
 (pdftex.def)             Requested size: 308.95662pt x 63.95943pt.
 
 
 [11 <../../img/STM32_DMA_FIFO.png>]
-<../../img/STM32_DMA_transfer_incrementing.png, id=196, 592.01175pt x 200.54926
+<../../img/STM32_DMA_transfer_incrementing.png, id=197, 592.01175pt x 200.54926
 pt>
 File: ../../img/STM32_DMA_transfer_incrementing.png Graphic file (type png)
 <use ../../img/STM32_DMA_transfer_incrementing.png>
 Package pdftex.def Info: ../../img/STM32_DMA_transfer_incrementing.png  used on
- input line 255.
+ input line 256.
 (pdftex.def)             Requested size: 355.2098pt x 120.33047pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 260--261
+Underfull \hbox (badness 10000) in paragraph at lines 261--262
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 269--270
+Underfull \hbox (badness 10000) in paragraph at lines 270--271
 
  []
 
 
 
 [12 <../../img/STM32_DMA_transfer_incrementing.png>]
-<../../img/Prinzip_periph2mem.png, id=208, 3155.79pt x 1409.265pt>
+<../../img/Prinzip_periph2mem.png, id=209, 3155.79pt x 1409.265pt>
 File: ../../img/Prinzip_periph2mem.png Graphic file (type png)
 <use ../../img/Prinzip_periph2mem.png>
 Package pdftex.def Info: ../../img/Prinzip_periph2mem.png  used on input line 2
-73.
+74.
 (pdftex.def)             Requested size: 315.59749pt x 140.93475pt.
-<../../img/Prinzip_DMA_Datenerfassung.png, id=209, 3292.3pt x 1971.365pt>
+<../../img/Prinzip_DMA_Datenerfassung.png, id=210, 3292.3pt x 1971.365pt>
 File: ../../img/Prinzip_DMA_Datenerfassung.png Graphic file (type png)
 <use ../../img/Prinzip_DMA_Datenerfassung.png>
 Package pdftex.def Info: ../../img/Prinzip_DMA_Datenerfassung.png  used on inpu
-t line 282.
+t line 283.
 (pdftex.def)             Requested size: 329.24928pt x 197.14804pt.
 
 
 [13 <../../img/Prinzip_periph2mem.png> <../../img/Prinzip_DMA_Datenerfassung.pn
 g>]
-Underfull \hbox (badness 10000) in paragraph at lines 289--290
+Underfull \hbox (badness 10000) in paragraph at lines 290--291
 
  []
 
-<../../img/Systemarchitektur_STM32F7.png, id=219, 501.072pt x 449.2785pt>
+<../../img/Systemarchitektur_STM32F7.png, id=220, 501.072pt x 449.2785pt>
 File: ../../img/Systemarchitektur_STM32F7.png Graphic file (type png)
 <use ../../img/Systemarchitektur_STM32F7.png>
 Package pdftex.def Info: ../../img/Systemarchitektur_STM32F7.png  used on input
- line 296.
+ line 297.
 (pdftex.def)             Requested size: 250.53539pt x 224.63869pt.
 
 
 [14 <../../img/Systemarchitektur_STM32F7.png>]
 
 [15]
-<../../img/V_Modell.png, id=236, 2172.115pt x 1128.215pt>
+<../../img/V_Modell.png, id=237, 2172.115pt x 1128.215pt>
 File: ../../img/V_Modell.png Graphic file (type png)
 <use ../../img/V_Modell.png>
-Package pdftex.def Info: ../../img/V_Modell.png  used on input line 317.
+Package pdftex.def Info: ../../img/V_Modell.png  used on input line 318.
 (pdftex.def)             Requested size: 304.09402pt x 157.94902pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 321--332
+Underfull \hbox (badness 10000) in paragraph at lines 322--333
 
  []
 
@@ -1359,35 +1359,35 @@ Underfull \hbox (badness 10000) in paragraph at lines 321--332
 [16 <../../img/V_Modell.png>]
 
 [17]
-Underfull \hbox (badness 10000) in paragraph at lines 348--349
+Underfull \hbox (badness 10000) in paragraph at lines 349--350
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 350--351
+Underfull \hbox (badness 10000) in paragraph at lines 351--352
 
  []
 
 
 
 [18]
-Underfull \hbox (badness 10000) in paragraph at lines 355--356
+Underfull \hbox (badness 10000) in paragraph at lines 356--357
 
  []
 
-<../../img/Projektarbeit_Architektur.png, id=262, 723.70375pt x 743.77875pt>
+<../../img/Projektarbeit_Architektur.png, id=263, 723.70375pt x 743.77875pt>
 File: ../../img/Projektarbeit_Architektur.png Graphic file (type png)
 <use ../../img/Projektarbeit_Architektur.png>
 Package pdftex.def Info: ../../img/Projektarbeit_Architektur.png  used on input
- line 361.
+ line 362.
 (pdftex.def)             Requested size: 289.47636pt x 297.50623pt.
 
 
 [19]
-<../../img/Projektstruktur.png, id=271, 3011.25pt x 1124.2pt>
+<../../img/Projektstruktur.png, id=272, 3011.25pt x 1124.2pt>
 File: ../../img/Projektstruktur.png Graphic file (type png)
 <use ../../img/Projektstruktur.png>
-Package pdftex.def Info: ../../img/Projektstruktur.png  used on input line 368.
+Package pdftex.def Info: ../../img/Projektstruktur.png  used on input line 369.
 
 (pdftex.def)             Requested size: 421.57213pt x 157.38692pt.
 
@@ -1399,7 +1399,7 @@ Package pdftex.def Info: ../../img/Projektstruktur.png  used on input line 368.
 [22]
 
 [23]
-Overfull \hbox (8.50172pt too wide) in paragraph at lines 421--421
+Overfull \hbox (8.50172pt too wide) in paragraph at lines 422--422
 \T1/lmr/m/n/12 GmbH & Co. KG, Aug. 2022. \T1/lmr/m/sc/12 isbn\T1/lmr/m/n/12 : 9
 783446474437. \T1/lmr/m/sc/12 doi\T1/lmr/m/n/12 : [][]$10 . 3139 / 978344647443
 7$[][]. 
@@ -1435,10 +1435,10 @@ l'.
 
  ) 
 Here is how much of TeX's memory you used:
- 30105 strings out of 473899
- 608223 string characters out of 5726499
+ 30104 strings out of 473899
+ 608206 string characters out of 5726499
  1552883 words of memory out of 5000000
- 52496 multiletter control sequences out of 15000+600000
+ 52495 multiletter control sequences out of 15000+600000
  627143 words of font info for 89 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
  108i,11n,107p,10927b,3374s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1453,10 +1453,10 @@ b><C:/Users/d-wir/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb
 Users/d-wir/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/
 Users/d-wir/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><C
 :/Users/d-wir/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb>
-Output written on Dokumentation_Projekt_USB_Oszi.pdf (26 pages, 1279834 bytes).
+Output written on Dokumentation_Projekt_USB_Oszi.pdf (26 pages, 1279780 bytes).
 
 PDF statistics:
- 543 PDF objects out of 1000 (max. 8388607)
+ 544 PDF objects out of 1000 (max. 8388607)
  89 named destinations out of 1000 (max. 500000)
  379 words of extra memory for PDF output out of 10000 (max. 10000000)
 
