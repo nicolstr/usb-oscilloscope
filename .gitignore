@@ -1,3 +1,4 @@
+# LATEX meta ignores
 **.aux
 **.bbl
 **.bcf
