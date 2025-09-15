@@ -133,17 +133,234 @@ Das Projektteam setzte sich aus drei Studierenden zusammen: Samuel Oeser war ver
 
 \subsection{Allgemeiner Aufbau eines DSOs}
 \label{subsec:oscilloscope_func}
-Mühl: \cite[Abb. 14.1]{Muehl2020}
+Das DSO erfasst Eingangssignale, digitalisiert sie und stellt die Messdaten nach Speicherung und Verarbeitung dar. Der grundlegende Aufbau umfasst die Eingangsumschaltung (DC AC GND) mit Vertikalverstärkung/abschwächung, den ADU mit Signalvorverarbeitung, den Datenspeicher, Takt und Steuerung, die Triggereinrichtung sowie die Anzeige. Die digitalisierten Daten werden im Speicher abgelegt und für Darstellung und Auswertung ausgelesen (vgl. \cite[S. 216]{Muehl2020}).
 
-\subsection{Leitungsimpedanzanpassung}
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{block_diagram_oscilloscope_muehl.png} 
+	\caption{Blockschaltbild eines Digitaloszilloskops (Abb. 14.1 aus \cite[S. 216]{Muehl2020})}
+	\label{fig:blockdiagram_oscilloscope}
+\end{figure}
 
-\subsection{ADC-Topologien}
+Für die Abtastung sind zwei Betriebsarten relevant. Die Echtzeitabtastung erfasst den kompletten Verlauf in einem Durchlauf und die zeitliche Auflösung wird durch die Rate des AD-Umsetzers (ADU) begrenzt. Die Äquivalenzzeitabtastung rekonstruiert sehr schnelle periodische Verläufe aus mehreren Durchläufen (vgl. \cite[S. 216]{Muehl2020}).
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{real_equivalent_sampling_muehl.png} 
+	\caption{Gegenüberstellung Echtzeitabtastung (a) und Äquivalenzzeitabtastung (b) (Abb. 14.2 aus \cite[S. 216]{Muehl2020})}
+	\label{fig:real_equivalent_sampling}
+\end{figure}
+
+Für eine gut auswertbare Darstellung sind etwa zehn Stützstellen je Periode zweckmäßig und die si-Interpolation (auch sinc-Interpolation genannt) ermöglicht bei erfüllter Nyquist Bedingung eine nahezu verzerrungsfreie Rekonstruktion. In der Praxis sollte die maximale Signalfrequenz mindestens um den Faktor 2,5 unter der Abtastrate liegen (vgl. \cite[S. 218f]{Muehl2020}).
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[scale=0.4]{point_linear_display_muehl.png} 
+		\caption{\centering Punktedarstellung (a) und lineare Interpolation (b)\\(Abb. 14.4 aus \cite[S. 218]{Muehl2020})}
+	\label{fig:point_linear_display}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[scale=0.4]{linear_si_display_muehl.png} 
+		\caption{\centering Lineare Interpolation (a) und si-Interpolation (b)\\(Abb. 14.5 aus \cite[S. 219]{Muehl2020})}
+	\label{fig:linear_si_display}
+\end{figure}
+
+In der Praxis werden für die Digitalisierung schnelle Flash-ADUs sowie mehrstufige Sub-ranging- / Pipeline‑Varianten eingesetzt. Diese ermöglichen hohe Raten bei moderater vertikaler Auflösung. Übliche Geräte arbeiten mit acht Bit vertikaler Auflösung. Je nach Architektur sind höhere Auflösungen möglich (vgl. \cite[S. 114-119]{Bernstein2023}). Für die Datenaufnahme stehen verschiedene Acquisition-Modi zur Verfügung. Der direkte Modus liefert äquidistante Samples. Min-Max oder Peak-Detect erfasst Extremwerte innerhalb eines Abtastintervalls und macht kurze Spikes sichtbar. Average reduziert Rauschen durch wiederholtes Mitteln. Single Shot zeichnet einmalige Ereignisse auf und der Roll-Modus zeigt sehr langsame Verläufe kontinuierlich an (vgl. \cite[S. 220f]{Muehl2020}). Die Genauigkeit wird wesentlich durch die Abtastrate und Abtaststrategie, Interpolation und Quantisierung sowie durch die Eingangsbeschaltung bestimmt. Bei Unterabtastung droht Aliasing und die Rekonstruktion wird unzuverlässig (vgl. \cite[S. ??]{Muehl2020}, Grundlagen zur Abtastung und Quantisierung). Wichtige Kenngrößen DSOs sind analoge Bandbreite, Abtastrate, vertikale Auflösung, Speichertiefe, Triggerfunktionen, Eingangsimpedanz, analoge Eingangsspannung sowie Anzeige und Darstellungsoptionen. Über die Kurvendarstellung hinaus gehören auch automatische Messfunktionen zum Grundumfang.
+
+\subsubsection{Trigger}
+
+Die Triggerung steuert die Signalspeicherung. Fortlaufend erfasste Abtastwerte laufen in einen Ringspeicher und beim Triggerereignis wird das Überschreiben gestoppt, sodass Pre Trigger und Post Trigger gezielt darstellbar sind (vgl. \cite[S. 216f]{Muehl2020}).
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[scale=0.5]{trigger_oscilloscope_muehl.png} 
+		\caption{\centering Messsignal $s(t)$ mit eingestellter Triggerschwelle und Triggerzeitpunkt\\(Teilabbildung der Abb. 14.3 aus \cite[S. 217]{Muehl2020})}
+	\label{fig:trigger_oscilloscope}
+\end{figure}
+
+Die analoge Triggerkette umfasst Quelle, Kopplung DC oder AC, einstellbare Triggerschwelle, Flankenrichtung, Hysterese und Auto Trigger. Sie erzeugt ein robustes Triggersignal für die Speichersteuerung (vgl. \cite[S. 210-212]{Muehl2020}).
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[scale=0.5]{trigger_circuit_oscilloscope_muehl.png} 
+		\caption{\centering Funktionsblöcke einer Triggereinrichtung (Abb. 13.8 aus \cite[S. 212]{Muehl2020})}
+	\label{fig:trigger_circuit_oscilloscope}
+\end{figure}
+
+\subsubsection{Frequenzkompensierter Tastkopf / Spannungsteiler}
+
+In der Praxis existieren verschiedene Arten von Tastköpfen wie passive, aktive und differenzielle Tastköpfe. Im Folgenden wird ausschließlich der frequenzkompensierte passive Tastkopf betrachtet, da er für das Projekt relevant ist (vgl. \cite[Kap. 15]{Muehl2020}). Dieser Tastkopf basiert auf einem frequenzkompensierten Spannungsteiler (seihe \autoref{fig:freq_compensated_vdiv}), realisiert als RC Teiler mit zu den Widerständen parallel geschalteten Kapazitäten und mit einer Anpassung an die Summe aus Bauteil- und Leitungskapazitäten. Die Kompensation mit Trimmkondensator (in \autoref{fig:freq_compensated_vdiv}: $C_T$) wird so abgeglichen, dass das Teilungsverhältnis im Nutz-Frequenzband annähernd konstant bleibt. Der Abgleich erfolgt mit einem Rechtecksignal. Unterkompensation zeigt sich durch eine nach unten geneigte Oberkante (\autoref{fig:freq_compensated_time}a), Überkompensation durch eine nach oben geneigte Oberkante (\autoref{fig:freq_compensated_time}c) und bei korrekter Kompensation bleibt die Oberkante über die Pulsbreite hinweg horizontal (\autoref{fig:freq_compensated_time}b) (vgl. \cite[S. 104-106]{Schruefer2022}).
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[scale=0.5]{freq_compensated_vdiv_schruefer.png} 
+		\caption{\centering Tastteiler am Eingang eines Oszilloskops (Bild 2.42 aus \cite[S. 105]{Schruefer2022})}
+	\label{fig:freq_compensated_vdiv}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[scale=0.5]{freq_compensated_time_schruefer.png} 
+		\caption{\centering Rechteckimpulse an RC-Spannungsteiler (Bild 2.43 aus \cite[S. 106]{Schruefer2022})\\ \footnotesize (a) unterkompensiert, (b) richtig kompensiert, (c) überkompensiert}
+	\label{fig:freq_compensated_time}
+\end{figure}
+
+
+Mit $R_1=R_T$ und $C_1=C_T$ gilt für die obere Teilimpedanz ($\underline{Z_1}$):
+\begin{equation}
+	\underline{Z_1}=R_1||\frac{1}{j\omega C_1}=\frac{R_1}{1+j\omega R_1 C_1}
+	\label{eq:z1}
+\end{equation}
+und mit $R_2=R_E$ und $C_2=C_K+C_E$ gilt für die untere Teilimpedanz ($\underline{Z_2}$):
+\begin{equation}
+	\underline{Z_2}=R_2||\frac{1}{j\omega C_2}=\frac{R_2}{1+j\omega R_2 C_2}
+	\label{eq:z2}
+\end{equation}
+Über den Spannungsteiler ergibt sich aus (\ref{eq:z1}) und (\ref{eq:z2}) das Verhältnis:
+\begin{equation}
+	\frac{\underline{U_1}}{\underline{U_2}}=\frac{\underline{Z_1}+\underline{Z_2}}{\underline{Z_2}}=1+\frac{\underline{Z_1}}{\underline{Z_2}}=1+\frac{R_1}{R_2}\frac{1+j\omega R_2 C_2}{1+j\omega R_1 C_1}
+	\label{eq:comp_vdiv}
+\end{equation}
+Dieses Verhältnis nimmt den frequenzunabhängigen Wert $\frac{\underline{U_1}}{\underline{U_2}}=1+\frac{R_1}{R_2}$ an, wenn gilt:
+\begin{equation}
+	R_1\cdot C_1=R_2\cdot C_2
+\end{equation}
+Durch Einsetzen von der ursprünglichen Werte in der tatsächlichen Schaltung und Auflösen nach $C_T$ ergibt sich für den Trimmkondensator ein Wert nach \autoref{eq:ct_compensated_vdiv} (vgl. \cite[S. 104-106]{Schruefer2022}).
+
+\begin{equation}
+	C_T=\frac{R_E\cdot (C_K+C_E)}{R_T}
+	\label{eq:ct_compensated_vdiv}
+\end{equation}
 
 \subsection{AAF-Entwurf (Nyquisttheorem)}
 \label{subsec:aaf_nyquist}
 
-\subsection{Frequenzkompensierter Spannungsteiler}
-Schrüfer: \cite[S. 114ff]{Schruefer2022}
+Ein Digitaloszilloskop erfasst das analoge Eingangssignal durch Abtastung mit einer bestimmten Frequenz. Diese Abtastung entspricht der Multiplikation des Signals mit einer Reihe von Impulsen, was im Frequenzbereich einer Faltung entspricht. Eine eindeutige Rekonstruktion aus den Abtastwerten setzt ein bandbegrenztes Eingangssignal mit höchster relevanter Frequenz und eine Abtastrate oberhalb des Doppelten dieser Frequenz voraus. Bei Unterschreitung falten sich Spektralkopien in das Basisband zurück und erzeugen Aliasse. Dies wird im Frequenzbild durch die Überlappung periodischer Spektren sichtbar in \autoref{fig:aaf_freq_domain} sowie im Zeitbereich durch scheinbar niedrigere Schwingungen in \autoref{fig:aliasing_time_domain}. Aus dieser Grundlage folgt die Notwendigkeit eines vorgeschalteten Anti-Aliasing-Tiefpasses, der außerbandige Anteile vor der Wandlung ausreichend dämpft (vgl. \cite[S. 314-316]{Bernstein2023} und \cite[S. 151-156]{Bernstein2024}).
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[scale=0.5]{aliasing_time_domain_bernstein.png} 
+		\caption{\centering Aliasing: Erzeugung einer Scheinfrequenz durch unpassende Abtastrate\\ (Bild 2.71 aus \cite[S. 154]{Bernstein2024})
+		}
+	\label{fig:aliasing_time_domain}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[scale=0.5]{aaf_freq_domain_bernstein.png} 
+		\caption{\centering Abtasttheorem (Bild 4.30 aus \cite[S. 314]{Bernstein2023})\\
+			\footnotesize(a) Betragsspektrum des bandbegrenzten Signals\\
+			(b) Vervielfachung des Basisspektrums durch Abtastung mit $f_S > 2\cdot f_g$\\
+			(c) Aliasing infolge zu niedriger Abtastrate ($f_S < 2\cdot f_g$)
+		}
+	\label{fig:aaf_freq_domain}
+\end{figure}
+
+Da der Entwurf des Anti-Aliasing-Filters maßgeblich durch den ausgewählten AD-Umsetzer bestimmt wird, sollte dieser zuerst festgelegt werden. Für aktive RC-Filter bewährt sich wegen Bauteiltoleranzen und des nicht idealen Übergangs vom Durchlass- in den Sperrbereich eine Abtastrate oberhalb der Mindestbedingung, typischerweise etwa 2.5 bis 4 mal $f_max$ und bei strengen Dämpfungszielen, z.B. wegen höheren Auflösungen, auch 5 bis 10 mal $f_max$. Eine höhere abtastrate erweitert zudem die Übergangsbreite und senkt damit die notwendige Filterordnung, erleichtert die direkte Darstellung des abgetasteten Signals ohne Rekonstruktionsalgorithmen und erlaubt eine Filterfamilie mit geringerer Gruppenlaufzeitvariation und damit besserem Zeitverhalten. Aus der gewählten Abtastrate folgt dann die Nyquist-Frequenz $f_N = \frac{f_S}{2}$ und die Übergangsbreite $\Delta f = f_N - f_{max}$ \cite{Pini2020}.\\
+
+Der theoretische, aus der Auflösung abgeleitete Dynamikbereich setzt eine Obergrenze für die sinnvoll anzustrebende Sperrbanddämpfung. Für einen \emph{N}-Bit-Umsetzer mit Full-Scale-Range \emph{FSR} gilt die Codebreite $Q = \frac{FSR}{2^N}$. Ein voll ausgesteuertes Störsignal soll auf einen Pegel unterhalb der Codebreite gedämpft werden, damit keine signifikanten Quantisierungsartefakte entstehen. Die Sperrbanddämpfung, beginnend an der Nyquist-Frequenz, wird daher so festgelegt, dass aliasingverursachende Anteile unterhalb der Codebreite bleiben:
+
+\begin{equation}
+	A(f_N)_{max}=20\cdot log_{10}\left( \frac{FSR}{Q}\right) =20\cdot log_{10}(2^N)=6.02\cdot N\hspace{0.1cm}dB
+\end{equation}
+
+In der Praxis begrenzt das $SINAD$ häufig den nutzbaren Dynamikbereich des gewählten AD-Umsetzers. Gilt $|SINAD|<|A_{max}|$ oder liegt die daraus ermittelte $ENOB$ (siehe \autoref{subsubsec:adc_characteristics} ``\nameref{subsubsec:adc_characteristics}``) unter der Auflösung des ADCs, dominieren Rauschen- und Verzerrungen. Bei Einsatz einer Mittelwertbildung kann es dennoch zweckmäßig sein, die Obergrenze $A_{max}$ anzusetzen. Im Regelfall wird die Sperrbanddämpfung an der Nyquistfrequenz so gewählt, dass gilt (vgl. \cite{Pini2020}):
+
+\begin{equation}
+	A(f_N)\approx min(|A_{max}|, |SINAD_{ADC}|)
+\end{equation}
+
+Die Bewertung des entworfenen Filters erfolgt in einem Tool wie dem Analog Filter Wizard über die Diagramme von Amplitudengang, Phasen- und Gruppenlaufzeit sowie Sprung- und Impulsantwort. Der Frequenzgang belegt Passband-Flachheit, Übergangsbreite und die Dämpfung an $f_N$. Phase und Gruppenlaufzeit zeigen, ob das Filter im Nutzband annähernd eine konstante Verzögerung liefert und damit Impulse und Flanken formtreu bleiben. Die Sprungantwort offenbart Überschwinger und Einschwingzeit. Eine Toleranzanalyse der zu erwartenden Widerstands- und Kapazitätsstreuungen zeigt, ob die Reserven ausreichend dimensioniert wurden (vgl. \cite{Pini2020} und \cite{Padmanabhuni2017}).
+
+\subsection{Analog-to-Digital-Converter (ADC)}
+\label{subsec:adc}
+
+Ein Digitaloszilloskop benötigt einen AD-Umsetzer als zentrales Hardwareelement, da erst die Wandlung des analogen Eingangssignals in digitale Messwerte die weitere Speicherung, Verarbeitung und Anzeige ermöglicht. Für die Auswahl steht die Topologie am Anfang, weil sie Abtastrate, erreichbare Auflösung, Latenz, Leistungsaufnahme und den Implementierungsaufwand bestimmt \textbf{(genaue Quelle?)} (Analog Devices 2001; Monolithic Power Systems o. J.).\\
+
+Für ein USB-Oszilloskop bieten sich Flash- und Pipeline-Topologien an, da beide hohe Abtastraten für breitbandige Zeitbereichsmessungen bereitstellen. Andere Varianten wie SAR oder Delta-Sigma werden in den Quellen überwiegend mittleren Geschwindigkeiten oder schmalbandigen Präzisionsaufgaben zugeordnet und sind somit für ein USB-Oszilloskop irrelevant \textbf{(genaue Quelle?)} (Monolithic Power Systems o. J.; Analog Devices 2001).\\
+
+\subsubsection{Flash-ADC}
+\autoref{fig:2bit_flash_adc} zeigt das Prinzip eines Flash-AD-Umsetzers mit zwei Bit. Eine Widerstandsleiter erzeugt abgestufte Referenzen und eine Komparatorbank vergleicht das Eingangssignal mit diesen Schwellen. Das resultierende Muster wird durch eine Logikschaltung in einen Binärcode überführt. Flash-ADCs erreichen, durch diesen simplen Aufbau, die höchste Geschwindigkeit. Da die Zahl der Komparatoren jedoch $2^N-1$ beträgt, steigen bei hohen Auflösungen Komplexität, Fläche, Leistungsaufnahme sowie insbesondere die Herstellungskosten annähernd exponentiell an. \textbf{(genaue Quelle?)} (Wikimedia Commons 2011; Monolithic Power Systems o. J.; Analog Devices 2001).
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[scale=0.3]{DMT_ADU-2-Bit-Flash.png} 
+		\caption{\centering  Flash-Umsetzer mit 2 Bit, einschl. Kodeumsetzer\\
+		\footnotesize Ersteller: Saure, Quelle: \href{https://de.wikipedia.org/wiki/Datei:DMT_ADU-2-Bit-Flash.svg}{[Link]} (Lizenz: \href{https://creativecommons.org/licenses/by-sa/3.0/}{CC BY-SA 3.0})
+		}
+	\label{fig:2bit_flash_adc}
+\end{figure}
+
+\subsubsection{Pipeline-ADC}
+Eine Alternative zur geringeren Skalierbarkeit des Flash-ADCs ist der Pipeline-ADC, der auch im Projekt zur Anwendung kommt. Er baut funktional auf dem Flash-Prinzip auf, indem mehrere niedrigauflösende Flash-ADCs in Stufen hintereinandergeschaltet werden. Am Eingang tastet eine Sample-and-Hold-Stufe das Signal ab. Jede Stufe wandelt in wenige Bits, rekonstruiert den quantisierten Anteil über einen DAC, bildet den Restfehler im Subtrahierer und verstärkt diesen für die nächste Stufe. Durch Überlappbits und digitale Fehlerkorrektur können die Genauigkeitsanforderungen an die einzelnen Stufen reduziert werden und die Durchsatzraten erhöht. Durch diesen Aufbau steigt der Aufwand mit zunehmender Auslösung nur linear an. Bauartbedingt entsteht allerdings eine definierte Zykluslatenz, die in ganzen oder halben Taktzyklen angegeben wird. Diese Latenz ist der entscheidende Nachteil eines Pipeline ADCs \textbf{(genaue Quelle?)}.
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[scale=0.3]{ADC_Chapter_2_Fig4-_960_x_658.png} 
+		\caption{\centering 12-bit pipelined ADC\\ \footnotesize Ersteller: MPS, Quelle: \href{https://www.monolithicpower.com/en/learning/mpscholar/analog-to-digital-converters/detailed-analysis-of-adc-architectures/pipeline-adcs}{[Link]} (Ch. 2, Fig. 4)
+		}
+	\label{fig:pipelined_adc}
+\end{figure}
+\pagebreak
+
+\subsubsection{Wichtige Kenngrößen von AD-Umsetzern}
+\label{subsubsec:adc_characteristics}
+
+Die Kenngrößen und deren Definition können dem IEEE Standard 1241-2023 \emph{``Terminology and Test Methods for Analog-to-Digital Converters``} (\cite[S. 22ff]{IEEE2023}) entnommen werden.\\
+
+\textbf{Auflösung und Eingangsbereich}\\
+Die Auflösung eines \emph{N}-Bit-AD-Umsetzers umfasst $2^N$ binäre Codes. Der differentielle Eingangspannungssbereich wird als Full-Scale Range (\emph{FSR}) bezeichnet und in Volt angegeben. Das LSB entspricht $\frac{FSR}{2^N}$.\\
+
+\textbf{Maximale Sampling-Rate}\\
+Die Abtastrate ist der Kehrwert der Abtastperiode (Abstand zwischen Abtastwerten). Sie bestimmt die zeitliche Auflösung und ist insbesondere in Bezug auf das Niyqusttheorem relevant.\\
+
+\textbf{Leistungsaufnahme}\\
+Die Leistungsaufnahme ist in erster Linie für die Auslegung der Versorgungsspannung und der zugehörigen Leitungen relevant.\\
+
+\textbf{Verstärkungsfehler}\\
+Der Verstärkungsfehler beschreibt die Abweichung der Kennliniensteigung von der idealen Steigung nach Offsetkorrektur und wird in $LSB$ oder in Prozent der Full-Scale-Range angegeben.\\
+
+\textbf{Offsetfehler}\\
+Der Offsetfehler ist die vertikale Verschiebung der Kennlinie relativ zur Referenzgeraden und wird in $LSB$ oder in Prozent der Full-Scale-Range angegeben.\\
+
+\textbf{Latenz}\\
+Die Latenz wird als Pipeline-Delay in ganzen oder halben Taktzyklen angegeben oder alternativ als Zeitangabe und beschreibt den Abstand zwischen Abtastung und Verfügbarkeit des zugehörigen Digitalworts.\\
+
+\textbf{Differentielle Nichtlinearität $DNL$}\\
+Die DNL ist die Abweichung der tatsächlichen Codebreite $W[k]$ von der idealen Codebreite $Q$, normiert auf $Q$, und wird in $LSB$ angegeben. Die Codebreite entspricht dem Spannungsbereich, der dem Code zugeordnet ist. Formal gilt $DNL[k]=\frac{W[k]}{Q}-1$.\\
+Die Angabe im Datenblatt entspricht $max\hspace{0.1cm}DNL[k]$.\\
+
+\textbf{Integrale Nichtlinearität $INL$}\\
+Abweichung des Übergangsspannungsniveaus von einem Code in den nächsten zu dem der idealisierten Geraden, nach Korrektur von Offset und Verstärkung.\\
+Damit gilt $INL[k]=\sum_{n=0}^kDNL[n]$. Die Angabe im Datenblatt entspricht $max\hspace{0.1cm}INL[k]$.\\
+
+\textbf{Rausch- und Verzerrungsmaße}\\
+\textbf{$SNR$} gibt das Verhältnis von Nutzsignal- zu Rauschleistung an:
+\begin{equation}
+	SNR_{dB}=10\cdot \log_{10}\left( \frac{P_{Signal}}{P_{Rauschen}}\right)
+\end{equation}
+
+\textbf{$THD$} ist ein Maß für das Verhältnis von harmonischen Verzerrungen zur Grundschwingung:
+\begin{equation}
+	THD_{dB}=10\cdot \log_{10}\left( \frac{P_{Harmonische}}{P_{Signal}}\right)
+\end{equation}
+
+\textbf{$SINAD$} umfasst harmonische Verzerrungen und Rauschen:
+\begin{equation}
+	SINAD_{dB}=10\cdot \log_{10}\left( \frac{P_{Signal}}{P_{Rauschen}+P_{Harmonische}}\right)
+\end{equation}
+
+\textbf{$ENOB$} ist die effektive Bitzahl und wird aus SINAD abgeleitet:
+\begin{equation}
+	ENOB\approx \frac{SINAD[dB]-1.76}{6.02}
+\end{equation}
+
+
+
+
+
 \pagebreak
 
 \subsection{Endliche Zustandsautomaten (Finite State-Machines - FSMs)}
@@ -185,7 +402,7 @@ Im Projekt kommen Moore-Automaten zur Anwendung.
 
 \subsubsection{Modellierung und Darstellung}
 
-Die Darstellung eines Zustandsautomaten erfolgt üblicherweise mit einem \emph{Zustandsdiagramm} (auch Zustandsübergangsdiagramm), einem gerichteten Graph\footnote{ ``Graphen sind ein [...] Konzept, um Objekte und die Beziehung zwischen diesen darzustellen.``\\Quelle: \href{https://www.tu-chemnitz.de/informatik/theoretische-informatik/TI-1/lecture-notes/06-00-graphs.html}{[Link]}}. Die Knoten stellen die Zustände der Menge $S$ dar und die gerichteten Kanten die Zustandsübergänge. Der Startzustand und die Endzustände werden gesondert gekennzeichnet. Eine übliche Darstellung für einen einfachen Moore-Automaten findet sich in \autoref{fig:statediagram_example}a (\emph{sn} sind die Zustände, \emph{xn} sind Eingaben oder Ereignisse und \emph{yn} sind Ausgaben) (vgl. \cite[S. 9]{Baesig2019}).\\
+Die Darstellung eines Zustandsautomaten erfolgt üblicherweise mit einem \emph{Zustandsdiagramm} (auch Zustandsübergangsdiagramm), einem gerichteten Graph\footnote{ ``Graphen sind ein [...] Konzept, um Objekte und die Beziehung zwischen diesen darzustellen.``\\Quelle: \href{https://www.tu-chemnitz.de/informatik/theoretische-informatik/TI-1/lecture-notes/06-00-graphs.html}{[Link]}}. Die Knoten stellen die Zustände der Menge $S$ dar und die gerichteten Kanten die Zustandsübergänge. Der Startzustand und die Endzustände werden gesondert gekennzeichnet. Eine übliche Darstellung für einen einfachen Moore-Automaten findet sich in \autoref{fig:statediagram_example}a (\emph{sn} sind die Zustände, \emph{xn} sind Eingaben oder Ereignisse und \emph{yn} sind Ausgaben; \emph{n = 1,2,...}) (vgl. \cite[S. 9]{Baesig2019}).\\
 
 Die Darstellung des Zustandsdiagramms ist auch als Teil der \emph{Unified Modelling Language (UML)}\footnote{aktueller UML-Standard (V2.5.1): \href{https://www.omg.org/spec/UML/2.5.1/About-UML}{[Link]}} festgelegt, welche auch durch internationale Normung festgeschrieben ist. In der Praxis (vor allem beim händischen Entwurf von Zustandsdiagrammen) hat sich aber ein Mischform bewährt, welche auf einige Elemente der UML zurückgreift (siehe \autoref{fig:statediagram_example}b). Es lassen sich beispielsweise auch hierarchische Strukturen integrieren (verschachtelte Zustände).
 
@@ -213,19 +430,12 @@ Die Darstellung des Zustandsdiagramms ist auch als Teil der \emph{Unified Modell
 
 \subsection{Direct Memory Access - DMA}
 \subsubsection{Allgemeines}
-DMA bezeichnet den Vorgang, bei dem durch eine dedizierte Einheit ohne Beteiligung einer CPU Daten transferiert werden (also als Hintergrundprozess). Er kommt zum Einsatz, wenn große Datenmengen von der Peripherie oder einem Speicher zu einem anderen transferiert werden müssen. Ein Chip oder eine Teileinheit eines µC, die solche Transfers durchführt, heißt \emph{Direct Memory Access Controller (DMAC)} (vgl. \cite[S. 125]{Urbanek2020}). Im Folgenden soll die Funktionsweise anhand der Realisierung in der im Projekt verwendeten STM32-Mikrocontrollerfamilie erläutert werden.
+DMA bezeichnet den Vorgang, bei dem durch eine dedizierte Einheit ohne Beteiligung einer CPU Daten transferiert werden (also als Hintergrundprozess). Er kommt zum Einsatz, wenn große Datenmengen von der Peripherie oder einem Speicher zu einem anderen transferiert werden müssen. Ein Chip oder eine Teileinheit eines Mikrocontroller (µC), die solche Transfers durchführt, heißt \emph{Direct Memory Access Controller (DMAC)} (vgl. \cite[S. 125]{Urbanek2020}). Im Folgenden soll die Funktionsweise anhand der Realisierung in der im Projekt verwendeten STM32-Mikrocontrollerfamilie erläutert werden.
 
 \subsubsection{DMA bei STM32-Mikrocontrollern}
-Der DMA-Controller ist ein AHB-Modul (AHB - advanced high-performance bus; standardisiertes Bussystem von ARM) und kann wie auch die CPU des Mikrocontrollers (µCs) als Master auf diesen Bus (genauer auf die Bus-Matrix) zugreifen. Durch die Datentransfers, welcher der DMAC nach seiner Konfiguration ohne CPU-Beteiligung ermöglicht, kann die System-Performance deutlich erhöht werden. Die Datentransfers können hierbei per Software oder über angeschlossene Peripherieelemente über sog. \emph{Requests} gestartet werden. Wird als steuerndes Element beispielsweise ein Hardware-Timer genutzt ermöglicht dies die zeitlich exakte Taktung von Datentransfers \cite[S. 6]{STmicroelectronics2016}, was im Projekt für den Abtastvorgang genutzt wird.
+Der DMA-Controller ist ein AHB-Modul (AHB - advanced high-performance bus; standardisiertes Bussystem von ARM) und kann wie auch die CPU des µCs als Master auf diesen Bus (genauer auf die Bus-Matrix) zugreifen. Durch die Datentransfers, welcher der DMAC nach seiner Konfiguration ohne CPU-Beteiligung ermöglicht, kann die System-Performance deutlich erhöht werden. Die Datentransfers können hierbei per Software oder über angeschlossene Peripherieelemente über sog. \emph{Requests} gestartet werden. Wird als steuerndes Element beispielsweise ein Hardware-Timer genutzt ermöglicht dies die zeitlich exakte Taktung von Datentransfers \cite[S. 6]{STmicroelectronics2016}, was im Projekt für den Abtastvorgang genutzt wird.
 
-\begin{figure}[H]
-	\centering
-    \includegraphics[scale=0.52]{STM32_DMAC.png} 
-	\caption{Blockdiagramm STM32-DMA-Controller aus \cite[S. 7]{STmicroelectronics2016}}
-	\label{fig:dmac}
-\end{figure}
-
-Der µC besitzt zwei unabhängige DMAC, deren Anbindung an Peripherie und Speicher unterschiedlich ausfällt, um alle Ressourcen des Systems flexibel zu verwenden.\\
+Der µC besitzt zwei unabhängige DMAC (Aufbau siehe \autoref{fig:dmac}), deren Anbindung an Peripherie und Speicher unterschiedlich ausfällt, um alle Ressourcen des Systems flexibel zu verwenden.\\
 
 Der DMAC besitzt 3 Schnittstellen:
 \begin{itemize}
@@ -236,20 +446,28 @@ Der DMAC besitzt 3 Schnittstellen:
 	\end{itemize}
 \end{itemize}
 
-Jeder Controller besitzt 8 Datenwege (\emph{Streams}), die separat für unterschiedliche Datentransfers konfiguriert werden können (die Transfers können aber nicht gleichzeitig laufen). Die Streams besitzen hierbei eine konfigurierbare Priorität und ein zentrales Modul, der \emph{Arbiter}, regelt den Zugriff der Streams auf die Ports in Abhängigkeit der Priorität und sorgt für einen deterministischen Ablauf der Transfers. Die einzelnen Streams besitzen noch eine Anzahl an \emph{Channeln}, über die der entsprechende Peripherie-Request für einen Stream ausgewählt werden kann (vgl. \cite[S. 7ff]{STmicroelectronics2016}). Die Zuordnung eines Peripherie-Requests zu einer Channel-Stream-Kombination kann dem Reference-Manual des Controllers entnommen werden (für den STM32F767: \cite[S. 252]{STmicroelectronics2024}).\\
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.8]{STM32_DMAC.png} 
+	\caption{Blockdiagramm STM32-DMA-Controller aus \cite[S. 7]{STmicroelectronics2016}}
+	\label{fig:dmac}
+\end{figure}
+
+Jeder Controller besitzt 8 Datenwege (\emph{Streams}), die separat für unterschiedliche Datentransfers konfiguriert werden können (die Transfers können aber nicht gleichzeitig laufen). Die Streams besitzen hierbei eine konfigurierbare Priorität und ein zentrales Modul, der \emph{Arbiter}, regelt den Zugriff der Streams auf die Ports in Abhängigkeit der Priorität und sorgt für einen deterministischen Ablauf der Transfers. Die einzelnen Streams besitzen noch eine Anzahl an \emph{Channeln}, über die der entsprechende Peripherie-Request für einen Stream ausgewählt werden kann (vgl. \cite[S. 7ff]{STmicroelectronics2016}). Die Zuordnung eines Peripherie-Requests zu einer Channel-Stream-Kombination kann dem Reference-Manual des Controllers entnommen werden (für den STM32F767: \cite[S. 252]{STmicroelectronics2024}).
+
+\pagebreak
 
 Jeder Stream besitzt außerdem einen 4-stufige \emph{FIFO}-Pufferspeicher (First-In-First-Out), welcher Latenzen beim Zugriff auf das Übertragungsmedium (Bus-Switch-Matrix) überbrücken kann und ein \emph{Verpacken/Entpacken der Daten} erlaubt (z.B.: input: 8bit-Pakete, output: 32bit-Pakete; siehe \autoref{fig:dma_fifo}).
 
 \begin{figure}[H]
 	\centering
-    \includegraphics[scale=0.6]{STM32_DMA_FIFO.png} 
+    \includegraphics[scale=0.8]{STM32_DMA_FIFO.png} 
 	\caption{FIFO-Struktur aus \cite[S. 11]{STmicroelectronics2016} (Teilabbildung)}
 	\label{fig:dma_fifo}
 \end{figure}
-\pagebreak
 
 \textbf{\underline{DMA-Transfers}}\\
-Ein Transfer wird zunächst über die \emph{Quelladresse (source address)} und \emph{Zieladresse (destination address)} charakterisiert, hier kann der DMA so konfiguriert werden, dass die Adressen nach einem Transfer automatisch inkrementiert werden können. Somit lassen sich, im Speicher hintereinanderliegende, Daten einfach übertragen. Quell- oder Zeiladresse können jeweils aber auch konstant gehalten werden (siehe späteres Beispiel).
+Ein Transfer wird zunächst über die \emph{Quelladresse (source address)} und \emph{Zieladresse (destination address)} charakterisiert, hier kann der DMA so konfiguriert werden, dass die Adressen nach einem Transfer automatisch inkrementiert werden können. Somit lassen sich, im Speicher hintereinanderliegende, Daten einfach übertragen. Quell- oder Zeiladresse können jeweils aber auch konstant gehalten werden (siehe \autoref{fig:periph_to_mem}).
 
 \begin{figure}[H]
 	\centering
@@ -276,6 +494,7 @@ Bei einem Timer-Überlauf des Hardware-Timers TIM1 findet ein DMA-Request statt 
 	\label{fig:periph_to_mem}
 \end{figure}
 
+\pagebreak
 Im Abtastsystem ist keine Inkrementierung der Quelladresse notwendig, da nur das Eingangsdatenregister ausgelesen werden muss, welches die Schnittstelle zum parallelen ADC-Interface darstellt. 
 
 \begin{figure}[H]
@@ -294,12 +513,12 @@ Durch den Arbitrierungsvorgang oder die Blockierung des Übertragungsmediums dur
 
 \begin{figure}[H]
 	\centering
-    \includegraphics[scale=0.5]{Systemarchitektur_STM32F7.png} 
+    \includegraphics[scale=0.7]{Systemarchitektur_STM32F7.png} 
 	\caption{Systemarchitektur für STM32F76xxx $\mu$C aus \cite[S. 72]{STmicroelectronics2024}}
 	\label{fig:sysarch_stm32f7}
 \end{figure}
 
-Nur Bus-Master (z.B.: Prozessor, DMA-Controller (in \autoref{fig:sysarch_stm32f7} rot hervorgehoben) ) können Lese- und Schreiboperationen initiieren.
+Nur Bus-Master (z.B.: Prozessor, DMA-Controller (in \autoref{fig:sysarch_stm32f7} rot hervorgehoben) können Lese- und Schreiboperationen initiieren.
 
 \pagebreak
 
