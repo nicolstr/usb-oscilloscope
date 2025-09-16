@@ -227,7 +227,7 @@ Dieses Verhältnis nimmt den frequenzunabhängigen Wert $\frac{\underline{U_1}}{
 \begin{equation}
 	R_1\cdot C_1=R_2\cdot C_2
 \end{equation}
-Durch Einsetzen von der ursprünglichen Werte in der tatsächlichen Schaltung und Auflösen nach $C_T$ ergibt sich für den Trimmkondensator ein Wert nach \autoref{eq:ct_compensated_vdiv} (vgl. \cite[S. 104-106]{Schruefer2022}).
+Durch Einsetzen der Einzelbauelemente für $R_1$, $R_2$, $C_1$ und $C_2$ und Auflösen nach $C_T$ ergibt sich für den Trimmkondensator ein Wert nach \autoref{eq:ct_compensated_vdiv}, damit der Spannungsteiler frequenzunabhängig wird (vgl. \cite[S. 104-106]{Schruefer2022}).
 
 \begin{equation}
 	C_T=\frac{R_E\cdot (C_K+C_E)}{R_T}
@@ -258,7 +258,7 @@ Ein Digitaloszilloskop erfasst das analoge Eingangssignal durch Abtastung mit ei
 	\label{fig:aaf_freq_domain}
 \end{figure}
 
-Da der Entwurf des Anti-Aliasing-Filters maßgeblich durch den ausgewählten AD-Umsetzer bestimmt wird, sollte dieser zuerst festgelegt werden. Für aktive RC-Filter bewährt sich wegen Bauteiltoleranzen und des nicht idealen Übergangs vom Durchlass- in den Sperrbereich eine Abtastrate oberhalb der Mindestbedingung, typischerweise etwa 2.5 bis 4 mal $f_max$ und bei strengen Dämpfungszielen, z.B. wegen höheren Auflösungen, auch 5 bis 10 mal $f_max$. Eine höhere abtastrate erweitert zudem die Übergangsbreite und senkt damit die notwendige Filterordnung, erleichtert die direkte Darstellung des abgetasteten Signals ohne Rekonstruktionsalgorithmen und erlaubt eine Filterfamilie mit geringerer Gruppenlaufzeitvariation und damit besserem Zeitverhalten. Aus der gewählten Abtastrate folgt dann die Nyquist-Frequenz $f_N = \frac{f_S}{2}$ und die Übergangsbreite $\Delta f = f_N - f_{max}$ \cite{Pini2020}.\\
+Da der Entwurf des Anti-Aliasing-Filters maßgeblich durch den ausgewählten AD-Umsetzer bestimmt wird, sollte dieser zuerst festgelegt werden. Für aktive RC-Filter bewährt sich wegen Bauteiltoleranzen und des nicht idealen Übergangs vom Durchlass- in den Sperrbereich eine Abtastrate oberhalb der Mindestbedingung, typischerweise etwa 2.5 bis 4 mal $f_{max}$ und bei strengen Dämpfungszielen, z.B. wegen höheren Auflösungen, auch 5 bis 10 mal $f_{max}$. Eine höhere Abtastrate erweitert zudem die Übergangsbreite und senkt damit die notwendige Filterordnung, erleichtert die direkte Darstellung des abgetasteten Signals ohne Rekonstruktionsalgorithmen und erlaubt eine Filterfamilie mit geringerer Gruppenlaufzeitvariation und damit besserem Zeitverhalten. Aus der gewählten Abtastrate folgt dann die Nyquist-Frequenz $f_N = \frac{f_S}{2}$ und die Übergangsbreite $\Delta f = f_N - f_{max}$ \cite{Pini2020}.\\
 
 Der theoretische, aus der Auflösung abgeleitete Dynamikbereich setzt eine Obergrenze für die sinnvoll anzustrebende Sperrbanddämpfung. Für einen \emph{N}-Bit-Umsetzer mit Full-Scale-Range \emph{FSR} gilt die Codebreite $Q = \frac{FSR}{2^N}$. Ein voll ausgesteuertes Störsignal soll auf einen Pegel unterhalb der Codebreite gedämpft werden, damit keine signifikanten Quantisierungsartefakte entstehen. Die Sperrbanddämpfung, beginnend an der Nyquist-Frequenz, wird daher so festgelegt, dass aliasingverursachende Anteile unterhalb der Codebreite bleiben:
 
@@ -429,6 +429,7 @@ Die Darstellung des Zustandsdiagramms ist auch als Teil der \emph{Unified Modell
 \end{itemize}
 
 \subsection{Direct Memory Access - DMA}
+\label{subsec:dma}
 \subsubsection{Allgemeines}
 DMA bezeichnet den Vorgang, bei dem durch eine dedizierte Einheit ohne Beteiligung einer CPU Daten transferiert werden (also als Hintergrundprozess). Er kommt zum Einsatz, wenn große Datenmengen von der Peripherie oder einem Speicher zu einem anderen transferiert werden müssen. Ein Chip oder eine Teileinheit eines Mikrocontroller (µC), die solche Transfers durchführt, heißt \emph{Direct Memory Access Controller (DMAC)} (vgl. \cite[S. 125]{Urbanek2020}). Im Folgenden soll die Funktionsweise anhand der Realisierung in der im Projekt verwendeten STM32-Mikrocontrollerfamilie erläutert werden.
 
@@ -467,12 +468,12 @@ Jeder Stream besitzt außerdem einen 4-stufige \emph{FIFO}-Pufferspeicher (First
 \end{figure}
 
 \textbf{\underline{DMA-Transfers}}\\
-Ein Transfer wird zunächst über die \emph{Quelladresse (source address)} und \emph{Zieladresse (destination address)} charakterisiert, hier kann der DMA so konfiguriert werden, dass die Adressen nach einem Transfer automatisch inkrementiert werden können. Somit lassen sich, im Speicher hintereinanderliegende, Daten einfach übertragen. Quell- oder Zeiladresse können jeweils aber auch konstant gehalten werden (siehe \autoref{fig:periph_to_mem}).
+Ein Transfer wird zunächst über die \emph{Quelladresse (source address)} und \emph{Zieladresse (destination address)} charakterisiert, hier kann der DMA so konfiguriert werden, dass die Adressen nach einem Transfer automatisch inkrementiert werden können. Somit lassen sich, im Speicher hintereinanderliegende, Daten einfach übertragen. Quell- oder Zieladresse können jeweils aber auch konstant gehalten werden (siehe \autoref{fig:periph_to_mem}).
 
 \begin{figure}[H]
 	\centering
     \includegraphics[scale=0.6]{STM32_DMA_transfer_incrementing.png} 
-	\caption{DMA Quell- und Zeiladressinkrementierung aus \cite[S. 10]{STmicroelectronics2016}}
+	\caption{DMA Quell- und Zieladressinkrementierung aus \cite[S. 10]{STmicroelectronics2016}}
 	\label{fig:dma_transfer_inc}
 \end{figure}
 
@@ -494,15 +495,7 @@ Bei einem Timer-Überlauf des Hardware-Timers TIM1 findet ein DMA-Request statt 
 	\label{fig:periph_to_mem}
 \end{figure}
 
-\pagebreak
-Im Abtastsystem ist keine Inkrementierung der Quelladresse notwendig, da nur das Eingangsdatenregister ausgelesen werden muss, welches die Schnittstelle zum parallelen ADC-Interface darstellt. 
-
-\begin{figure}[H]
-	\centering
-    \includegraphics[scale=0.1]{Prinzip_DMA_Datenerfassung.png} 
-	\caption{Funktionsprinzip DMA Abtastung}
-	\label{fig:periph_to_mem}
-\end{figure}
+Im Abtastsystem ist keine Inkrementierung der Quelladresse notwendig, da nur das Eingangsdatenregister ausgelesen werden muss, welches die Schnittstelle zum parallelen ADC-Interface darstellt (siehe \autoref{dma_data_acq} im Entwurfsteil der FW).
 
 \pagebreak
 
@@ -595,36 +588,36 @@ Ausgehend von diesem Konzept und der klaren Aufteilung in die Bereiche Hardware,
 \pagebreak
 
 %%%%%%%%%%% Realisierung %%%%%%%%%%%
-\section{Realisierung}
-
-\subsection{Hardware (HW)}
-\subsubsection{Entwurf}
-\subsubsection{Implementierung}
-\subsubsection{HW-Test}
+\section{Hardware (HW)}
+\subsection{Entwurf}
+\subsection{Implementierung}
+\subsection{HW-Test}
 
 \pagebreak
 
-\subsection{Schnittstelle Hardware - Firmware}
+\section{Schnittstelle Hardware - Firmware}
 
 \pagebreak
 
 
-\subsection{Firmware (FW)}
-\subsubsection{Entwurf}
-\textbf{Auswahl des Mikrocontrollers}\\
-Eine zentrale Entscheidung im Entwurf der Firmware war die Auswahl eines geeigneten Mikrocontrollers (µC), welcher den zentralen Knotenpunkt der Gesamtanwendung darstellt. Hierzu wurden nach der Erstellung des Gesamtkonzepts zunächst die Anforderungen definiert, die an den Mikrocontroller gestellt werden.
-Bei der Auswahl musste berücksichtigt werden, dass ein \emph{Direct Memory Access (DMA)} vorhanden ist, um die Speicherung der Daten nach Eintreten eines Trigger-Ereignisses ohne Umweg über die CPU zu ermöglichen. Außerdem wurde gemäß der Anforderungen im Gesamtkonzept eine \emph{USB-Schnittstelle} benötigt, um die Kommunikation des Mikrocontrollers (USB-Device) mit dem PC (USB-Host) sicherzustellen. Dabei war es von Vorteil, wenn der Controller mindestens Full-Speed-Übertragungen mit 12 Mbit/s, idealerweise High-Speed-Übertragungen mit 480 Mbit/s unterstützt. Weiterhin war es erforderlich, dass ein \emph{erschwingliches Entwicklungsboard} verfügbar ist, welches für den ersten Prototypen genutzt werden kann. Dieses sollte zunächst zum Einsatz kommen, bevor der Mikrocontroller zusammen mit den übrigen Schaltungsteilen auf eine gemeinsame Leiterplatte integriert wird. Darüber hinaus sollten \emph{standardisierte Schnittstellen} wie I²C und SPI vorhanden sein, um die Anbindung eines externen ADCs auch auf andere Weise zu ermöglichen, falls die parallele Schnittstelle nicht umsetzbar wäre. Ein \emph{hoher GPIO Input Speed} war notwendig, um die geplante parallele Anbindung eines externen ADCs mit 12 Bit Auflösung über zwölf parallele GPIO-Leitungen bei der geplanten Abtastrate zu gewährleisten. Außerdem musste der Mikrocontroller über \emph{ausreichend großen SRAM-Speicher} verfügen, um die erfassten Abtastwerte ablegen zu können.
+\section{Firmware (FW)}
+\subsection{Entwurf}
+\subsubsection{Auswahl des Mikrocontrollers}
+Eine zentrale Entscheidung im Entwurf der Firmware war die Auswahl eines geeigneten Mikrocontrollers (µC). Dieser stellt den zentralen Knotenpunkt der Gesamtanwendung dar. Hierzu wurden nach der Erstellung des Gesamtkonzepts zunächst die Anforderungen definiert, die an den Mikrocontroller gestellt werden.
+Bei der Auswahl musste berücksichtigt werden, dass ein \emph{Direct Memory Access (DMA)} vorhanden ist. Dieser ermöglicht die Speicherung der Daten nach Eintreten eines Trigger-Ereignisses ohne Umweg über die CPU. Außerdem wurde gemäß der Anforderungen im Gesamtkonzept eine \emph{USB-Schnittstelle} benötigt, um die Kommunikation des Mikrocontrollers (USB-Device) mit dem PC (USB-Host) sicherzustellen. Dabei war es von Vorteil, wenn der Controller mindestens Full-Speed-Übertragungen mit 12 Mbit/s, idealerweise High-Speed-Übertragungen mit 480 Mbit/s unterstützt. Weiterhin war es erforderlich, dass ein \emph{erschwingliches Entwicklungsboard} verfügbar ist, welches für den ersten Prototypen genutzt werden kann. Dieses sollte zunächst zum Einsatz kommen, bevor der Mikrocontroller zusammen mit den übrigen Schaltungsteilen auf eine gemeinsame Leiterplatte integriert wird. Darüber hinaus sollten \emph{standardisierte Schnittstellen} wie I²C und SPI vorhanden sein, um die Anbindung eines externen ADCs auch auf andere Weise zu ermöglichen, falls die parallele Schnittstelle nicht umsetzbar wäre. Ein \emph{hoher GPIO Input Speed} war notwendig, um die geplante parallele Anbindung eines externen ADCs mit 12 Bit Auflösung über zwölf parallele GPIO-Leitungen bei der geplanten Abtastrate zu gewährleisten. Außerdem musste der Mikrocontroller über \emph{ausreichend großen SRAM-Speicher} verfügen, um die erfassten Abtastwerte ablegen zu können.
 
-\begin{equation}
+\begin{footnotesize}
+	\begin{equation}
 	[Benötigter Speicher] = [Anzahl Abtastwerte]\cdot \left[\frac{2 Byte}{Abtastwert}\right]
 \end{equation}
 \begin{equation}
 	[Anzahl Abtastwerte] = \frac{[gewünschte Abtastzeit]}{[Abtastperiode]}
 \end{equation}
+\end{footnotesize}
 
 Die Anforderungen wurde unter der Annahme formuliert, dass ein externer ADC eingesetzt werden sollte. Die angestrebte Abtastrate von etwa 10 MHz musste auch mikrocontrollerseitig erreichbar sein.\\
 
-Auf Grundlage der positiven Erfahrungen mit STM32-Mikrocontrollern der Firma STMicroelectronics sowie der integrierten Entwicklungsumgebung STM32CubeIDE im MCT-Praktikum, wurde entschieden, einen Mikrocontroller aus dieser Serie auszuwählen. Ein zusätzlicher Vorteil dieser Produktfamilie war die Verfügbarkeit kostengünstiger Entwicklungsboards (NUCLEO-Boards), die sich hervorragend für die ersten Entwicklungsschritte eignen und die Materialkosten des Projekts reduzierten.\\
+Auf Grundlage der positiven Erfahrungen mit STM32-Mikrocontrollern der Firma STMicroelectronics sowie der integrierten Entwicklungsumgebung STM32CubeIDE im MCT-Praktikum, wurde entschieden, einen Mikrocontroller aus dieser Serie auszuwählen. Ein zusätzlicher Vorteil dieser Produktfamilie ist die Verfügbarkeit kostengünstiger Entwicklungsboards (NUCLEO-Boards), die sich hervorragend für die ersten Entwicklungsschritte eignen und die Materialkosten des Projekts reduzieren.\\
 
 Nach einem Vergleich verschiedener STM32-Produktfamilien in Bezug auf die definierten Anforderungen fiel die Wahl auf die \href{https://www.st.com/en/microcontrollers-microprocessors/stm32f7-series.html}{STM32F7-Serie}. Diese Mikrocontroller basieren auf einem ARM Cortex-M7 und gehören zum High-Performance-Bereich der STM32-Serie. Lediglich die STM32H7-Serie bietet noch höhere Leistung, da sie über einen weiteren Prozessorkern (Cortex-M4-Core) verfügen. Schlussendlich wurde der \href{https://www.st.com/en/microcontrollers-microprocessors/stm32f767zi.html}{STM32F767ZI} als Mikrocontroller ausgewählt. Dieser bietet im Vergleich zu anderen Controllern derselben Familie einen größeren Flash- und SRAM-Speicher. Zudem ist ein passendes Entwicklungsboard, das \href{https://www.st.com/en/evaluation-tools/nucleo-f767zi.html}{NUCLEO-F767ZI}, verfügbar. Ein weiterer Vorteil dieses Boards ist das integrierte Programmiergerät, das durch einen separaten Mikrocontroller mit entsprechender Firmware realisiert wird.\\
 
@@ -638,41 +631,102 @@ Nach einem Vergleich verschiedener STM32-Produktfamilien in Bezug auf die defini
 Nachdem die Entwicklungsboards in Absprache mit dem MCT-Labor beschafft worden waren, erfolgte eine erneute Einarbeitung in die Arbeit mit ARM Cortex-M Mikrocontrollern und den spezifischen Funktionen der STM32-Hardware.
 \pagebreak
 
-\textbf{Konzept des Abtastprozesses}\\
+\subsubsection{Konzept des Abtastprozesses}
+Der mikrocontrollerseitige Abtastprozess gliedert sich in zwei Hauptaufgaben:
+
+\begin{itemize}
+	\item Das \emph{Feststellen des Aufzeichnungsbeginns} durch ein definiertes Triggerereignis und
+
+	\item die \emph{Aufnahme und Speicherung} der digitalisierten Abtastwerte.
+\end{itemize}
+
+Das Konzept der Abtastung ist als Funktionsschema in \autoref{fig:data_acq_concept} dargestellt.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.12]{Funktionsschema_Datenerfassung.png} 
+	\caption{Funktionsschema der Abtastung}
+	\label{fig:data_acq_concept}
+\end{figure}
+
+\underline{Parallele Datenanbindung}\\
+Für die Übertragung der Messdaten vom externen ADC zum Mikrocontroller wurde eine \emph{parallele Schnittstelle} umgesetzt. Jedes der zwölf Bits des 12-Bit-ADCs wird dabei über eine eigene Datenleitung an den Mikrocontroller herangeführt. Der wesentliche Vorteil dieser Anbindung liegt in der vergleichsweise einfachen Implementierung, da kein komplexes serielles Übertragungsprotokoll notwendig ist. Ein Nachteil besteht jedoch darin, dass bei hohen Abtastraten Synchronisationsprobleme auftreten können.\\
+
+Die GPIO-Pins des Mikrocontrollers sind in Ports mit jeweils 16 Pins organisiert, die sich ein gemeinsames \emph{Input Data Register (IDR)} teilen. Da für die Parallelschnittstelle zwölf Leitungen benötigt werden, können alle Bits der ADC-Ausgabe in einem einzigen Lesezugriff erfasst werden. Die Aktualisierung des IDR erfolgt mit jedem Zyklus des AHB-Busses \cite[S. 224]{STmicroelectronics2024}, der mit bis zu 216 MHz betrieben werden kann (siehe Clock-Tree in \cite[S. 154]{STmicroelectronics2024}). Dieser Wert wird aber durch eine vorhandene Eingangskapazität der GPIOs reduziert, welche eventuell auf einen neuen Wert (Spannungspegel) umgeladen werden müssen. Die tatsächliche, maximal mögliche Abtastfrequenz hängt also von dieser Eingangskapazität und der treibenden Schaltung ab. Im Datenblatt des $\mu$C ist für die Eingangskapazität ein Wert von $C_{IO}=5pF$ angegeben (\cite[S. 157]{STmicroelectronics2025}). Maximale Änderungsfrequenzen sind aber nur für die Nutzung der GPIOs als Output angegeben (die treibende Stufe ist dann die Ausgangsstufe des GPIO). Hier werden, je nach Einstellung des GPIO-Speeds (konfigurierbar), selbst im langsamsten Modus noch Frequenzen im einstelligen MHz-Bereich erreicht (\cite[S. 160f]{STmicroelectronics2025}). Unter der Annahme, dass die Treiberfähigkeit der ADC-Datenausgänge höher ist, kann die Abtastrate von 10 MHz realisiert werden.\\
+
+\underline{Speicherorganisation}\\
+Die erfassten Abtastwerte werden zunächst im internen SRAM des Mikrocontrollers zwischengespeichert. Der STM32F767 verfügt über insgesamt 512 KB SRAM, aufgeteilt in mehrere Speicherblöcke \cite[S. 77ff]{STmicroelectronics2024} (Memory Map). Für das Projekt wurde zunächst der \emph{SRAM1-Bereich} (368 KB) für die Speicherung der Messdaten reserviert, während der \emph{DTCM-Bereich} (128 KB) für Stack und Heap vorgesehen wurde. Diese Aufteilung gewährleistet eine klare Trennung zwischen Programmdaten und Messwertspeicher und kann bei der Implementierung im Linker-Script festgelegt werden.\\
+
+\underline{DMA-basierter Datentransfer}\\
+Ein direkter Zugriff der CPU auf die GPIO-Datenregister und das anschließende Abspeichern der Daten in den SRAM würde den Prozessor vollständig auslasten und keine parallele Ausführung anderer Aufgaben ermöglichen. Aus diesem Grund wurde der Datentransfer mithilfe des Direct Memory Access (DMA) realisiert (siehe \autoref{subsec:dma}).\\
+
+Beim gewählten Ansatz wurde der DMA-Controller so konfiguriert, dass er den Wert des Eingangsdatenregisters der GPIOs automatisch in den SRAM schreibt, ohne dass die CPU beteiligt ist (siehe Schema in \autoref{fig:data_acq_dma}). Jeder DMA-Transfer wird durch einen Hardware-Timer (TIM1) angestoßen. Dadurch kann eine exakte Synchronisation zwischen dem Clock-Signal des ADC und der Datenübertragung erreicht werden. Die Quelladresse bleibt während der gesamten Aufzeichnung konstant (Adresse des IDR), während die Zieladresse nach jedem Transfer um zwei Byte inkrementiert wird, um den nächsten Speicherplatz im SRAM anzusprechen.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.1]{Prinzip_DMA_Datenerfassung.png} 
+	\caption{Funktionsprinzip DMA Abtastung - Adresswerte dienen nur der Übersicht}
+	\label{fig:data_acq_dma}
+\end{figure}
+
+Da das NDTR-Register (Number of Data Transfers Register) maximal 65.535 Transfers speichern kann \cite[S. 276]{STmicroelectronics2024}, wird der Double-Buffer Mode (DBM) des DMA-Controllers eingesetzt (benötigt werden z.B. 100.000 Transfers für 100.000 Abtastwerte). In diesem Modus werden abwechselnd zwei getrennte Zieladress-Zeiger genutzt, um kontinuierliche Transfers ohne Datenverlust zu ermöglichen. Sobald ein Speicherbereich befüllt ist, wird automatisch in den anderen Bereich weitergeschrieben. Gleichzeitig kann die Software den gefüllten Speicherbereich auswerten oder für den USB-Transfer vorbereiten, ohne den laufenden Datentransfer zu unterbrechen.\\
+
+\underline{Trigger-Mechnismus}\\
+Der Beginn der Aufzeichnung wird durch ein definiertes Triggerereignis gesteuert. Nach dem Auslösen dieses Ereignisses startet der DMA automatisch mit dem Füllen des vorgesehenen Speicherbereichs. Die Größe dieses Bereichs sowie die Anzahl der Transfers wurde zuvor in der Firmware festgelegt. Sobald der Speicher vollständig gefüllt ist, wird der Abtastprozess automatisch beendet, und die Daten stehen für die anschließende Übertragung an den PC bereit. Der Trigger-Mechanismus wurde zunächst mit Hardware-Interrupts geplant (bei STM32: Extended Interrupts - EXTI). Mit dem EXTI-Modul kann ein Aufruf eines Exception-Handlers\footnote{Bezeichnung für eine Interrupt-Service-Routine (ISR) bei ARM-Cortex-$\mu$C.} bei einer steigenden oder fallenden Flanke an einem GPIO erfolgen, in welchem der DMA für die Datentransfers aktiviert wird\footnote{Die Zeit zwischen der Triggerflanke und DMA-Aktivierung im Exception-Handler ist die Triggerlatenz.}.\\
+
+\underline{Synchronisation mit ADC-Takt}\\
+Für eine störungsfreie Datenaufnahme muss der Datentransfer exakt auf den ADC-Takt abgestimmt werden. Hierfür wurde das Taktsignal für den ADC durch denselben Timer erzeugt, der auch die DMA-Requests auslöste. Die Hardware-Timer der STM32-Controller besitzen sogenannte Capture-Compare-Einheiten mit sogenannten Output-Compare-Anschlüssen (OC), welche mit bestimmten GPIOs des $\mu$C verbunden werden können (siehe \cite[S. 877]{STmicroelectronics2024}). Der Hardware-Timer kann hierdurch einen GPIO ohne CPU-Beteiligung ansteuern. Um ein Setup-Violation-Problem zu vermeiden, wurde der Takt invertiert: Die positive Flanke des Signals erzeugt am ADC-Ausgang einen neue Wert, während synchron zur negativen Flanke der DMA-Transfer ausgelöst wird. Dadurch können sich die ADC-Daten für eine halbe Abtastperiode $\frac{T_S}{2}$ stabilisieren, bevor sie eingelesen werden. Dies stellt eine zuverlässige Digitalisierung sicher (siehe \autoref{fig:timing_dma_adc}).
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.15]{Timing_Diagramm_Timer_ADC_DMA.png} 
+	\caption{\centering Zeitdiagramm und Registerübersicht des Hardware-Timers\\für die Synchronisation von ADC und DMA (Sampling am $\mu$C)}
+	\label{fig:timing_dma_adc}
+\end{figure}
 
 \pagebreak
 
-\textbf{Konzept der Kommunikation (USB CDC)}\\
+\subsubsection{Konzept der Kommunikation (USB CDC)}
 
 \pagebreak
 
-\textbf{Entwurf der Gesamtanwendung als FSM}\\
+\subsubsection{Konzept der Firmware als FSM}
 
 \pagebreak
 
 
-\textbf{Entwurf des Preprocessings}
+\subsubsection{Preprocessing-Konzept}
 
 \emph{Umrechnung 12bit signed (ADC) in 16bit signed}
 
-\subsubsection{Implementierung}
+\subsection{Implementierung}
 
 \pagebreak
 
-\subsubsection{FW-Test}
+\subsection{FW-Test}
 
 \pagebreak
 
-\subsection{Schnittstelle Firmware - Software}
+\section{Schnittstelle Firmware - Software}
 
 \pagebreak
 
-\subsection{Software (SW)}
+\section{Software (SW)}
+\subsection{Entwurf}
 
-\subsection{Zusammenführung}
-\subsubsection{Entwurf}
-\subsubsection{Implementierung}
-\subsubsection{SW-Test}
+\pagebreak
+\subsection{Implementierung}
+
+\pagebreak
+
+\subsection{SW-Test}
+
+\pagebreak
+
+\section{Zusammenführung}
+\subsection{Entwurf}
+\subsection{Implementierung}
+\subsection{SW-Test}
 
 \pagebreak
 
