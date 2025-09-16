@@ -602,15 +602,70 @@ Ausgehend von diesem Konzept und der klaren Aufteilung in die Bereiche Hardware,
 \subsubsection{Implementierung}
 \subsubsection{HW-Test}
 
+\pagebreak
+
 \subsection{Schnittstelle Hardware - Firmware}
+
+\pagebreak
 
 
 \subsection{Firmware (FW)}
 \subsubsection{Entwurf}
+\textbf{Auswahl des Mikrocontrollers}\\
+Eine zentrale Entscheidung im Entwurf der Firmware war die Auswahl eines geeigneten Mikrocontrollers (µC), welcher den zentralen Knotenpunkt der Gesamtanwendung darstellt. Hierzu wurden nach der Erstellung des Gesamtkonzepts zunächst die Anforderungen definiert, die an den Mikrocontroller gestellt werden.
+Bei der Auswahl musste berücksichtigt werden, dass ein \emph{Direct Memory Access (DMA)} vorhanden ist, um die Speicherung der Daten nach Eintreten eines Trigger-Ereignisses ohne Umweg über die CPU zu ermöglichen. Außerdem wurde gemäß der Anforderungen im Gesamtkonzept eine \emph{USB-Schnittstelle} benötigt, um die Kommunikation des Mikrocontrollers (USB-Device) mit dem PC (USB-Host) sicherzustellen. Dabei war es von Vorteil, wenn der Controller mindestens Full-Speed-Übertragungen mit 12 Mbit/s, idealerweise High-Speed-Übertragungen mit 480 Mbit/s unterstützt. Weiterhin war es erforderlich, dass ein \emph{erschwingliches Entwicklungsboard} verfügbar ist, welches für den ersten Prototypen genutzt werden kann. Dieses sollte zunächst zum Einsatz kommen, bevor der Mikrocontroller zusammen mit den übrigen Schaltungsteilen auf eine gemeinsame Leiterplatte integriert wird. Darüber hinaus sollten \emph{standardisierte Schnittstellen} wie I²C und SPI vorhanden sein, um die Anbindung eines externen ADCs auch auf andere Weise zu ermöglichen, falls die parallele Schnittstelle nicht umsetzbar wäre. Ein \emph{hoher GPIO Input Speed} war notwendig, um die geplante parallele Anbindung eines externen ADCs mit 12 Bit Auflösung über zwölf parallele GPIO-Leitungen bei der geplanten Abtastrate zu gewährleisten. Außerdem musste der Mikrocontroller über \emph{ausreichend großen SRAM-Speicher} verfügen, um die erfassten Abtastwerte ablegen zu können.
+
+\begin{equation}
+	[Benötigter Speicher] = [Anzahl Abtastwerte]\cdot \left[\frac{2 Byte}{Abtastwert}\right]
+\end{equation}
+\begin{equation}
+	[Anzahl Abtastwerte] = \frac{[gewünschte Abtastzeit]}{[Abtastperiode]}
+\end{equation}
+
+Die Anforderungen wurde unter der Annahme formuliert, dass ein externer ADC eingesetzt werden sollte. Die angestrebte Abtastrate von etwa 10 MHz musste auch mikrocontrollerseitig erreichbar sein.\\
+
+Auf Grundlage der positiven Erfahrungen mit STM32-Mikrocontrollern der Firma STMicroelectronics sowie der integrierten Entwicklungsumgebung STM32CubeIDE im MCT-Praktikum, wurde entschieden, einen Mikrocontroller aus dieser Serie auszuwählen. Ein zusätzlicher Vorteil dieser Produktfamilie war die Verfügbarkeit kostengünstiger Entwicklungsboards (NUCLEO-Boards), die sich hervorragend für die ersten Entwicklungsschritte eignen und die Materialkosten des Projekts reduzierten.\\
+
+Nach einem Vergleich verschiedener STM32-Produktfamilien in Bezug auf die definierten Anforderungen fiel die Wahl auf die \href{https://www.st.com/en/microcontrollers-microprocessors/stm32f7-series.html}{STM32F7-Serie}. Diese Mikrocontroller basieren auf einem ARM Cortex-M7 und gehören zum High-Performance-Bereich der STM32-Serie. Lediglich die STM32H7-Serie bietet noch höhere Leistung, da sie über einen weiteren Prozessorkern (Cortex-M4-Core) verfügen. Schlussendlich wurde der \href{https://www.st.com/en/microcontrollers-microprocessors/stm32f767zi.html}{STM32F767ZI} als Mikrocontroller ausgewählt. Dieser bietet im Vergleich zu anderen Controllern derselben Familie einen größeren Flash- und SRAM-Speicher. Zudem ist ein passendes Entwicklungsboard, das \href{https://www.st.com/en/evaluation-tools/nucleo-f767zi.html}{NUCLEO-F767ZI}, verfügbar. Ein weiterer Vorteil dieses Boards ist das integrierte Programmiergerät, das durch einen separaten Mikrocontroller mit entsprechender Firmware realisiert wird.\\
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.2]{nucleof767zi.png} 
+	\caption{\centering Beispielabbildung für ein NUCLEO-144-Board, wie das NUCLEO-F767ZI\\ (Quelle: \href{https://www.st.com/en/evaluation-tools/nucleo-f767zi.html}{[Link]})}
+	\label{fig:nucleo144}
+\end{figure}
+
+Nachdem die Entwicklungsboards in Absprache mit dem MCT-Labor beschafft worden waren, erfolgte eine erneute Einarbeitung in die Arbeit mit ARM Cortex-M Mikrocontrollern und den spezifischen Funktionen der STM32-Hardware.
+\pagebreak
+
+\textbf{Konzept des Abtastprozesses}\\
+
+\pagebreak
+
+\textbf{Konzept der Kommunikation (USB CDC)}\\
+
+\pagebreak
+
+\textbf{Entwurf der Gesamtanwendung als FSM}\\
+
+\pagebreak
+
+
+\textbf{Entwurf des Preprocessings}
+
+\emph{Umrechnung 12bit signed (ADC) in 16bit signed}
+
 \subsubsection{Implementierung}
+
+\pagebreak
+
 \subsubsection{FW-Test}
 
+\pagebreak
+
 \subsection{Schnittstelle Firmware - Software}
+
+\pagebreak
 
 \subsection{Software (SW)}
 
