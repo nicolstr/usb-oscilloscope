@@ -53,6 +53,8 @@
 %\setlength{\topsep}{0pt} % Kein xtra Abstand über Tabulator	
 %\setlength{\partopsep}{0pt} % Kein xtra Abstand unter Tabulator	
 
+% Code-Snippets
+\usepackage{listings}
 
 % Hyperlinks und URLs etc.
 \usepackage[ 
@@ -93,6 +95,35 @@
 \addbibresource{Bibliographie_Projekt_USB_Oszi.bib}
 %\usepackage[nohyperlinks, printonlyused]{acronym} % Abkürzungsverzeichnis
 
+
+% define style for code snippets
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{codefunc}{rgb}{0,0.3,0.7}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    identifierstyle=\color{codefunc},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
 
 \title{Projekt USB-Oszilloskop}
 \author{Samuel Oeser, Nicole Sturm, Daniel Wirth}
@@ -277,12 +308,12 @@ Die Bewertung des entworfenen Filters erfolgt in einem Tool wie dem Analog Filte
 \subsection{Analog-to-Digital-Converter (ADC)}
 \label{subsec:adc}
 
-Ein Digitaloszilloskop benötigt einen AD-Umsetzer als zentrales Hardwareelement, da erst die Wandlung des analogen Eingangssignals in digitale Messwerte die weitere Speicherung, Verarbeitung und Anzeige ermöglicht. Für die Auswahl steht die Topologie am Anfang, weil sie Abtastrate, erreichbare Auflösung, Latenz, Leistungsaufnahme und den Implementierungsaufwand bestimmt \textbf{(genaue Quelle?)} (Analog Devices 2001; Monolithic Power Systems o. J.).\\
+Ein Digitaloszilloskop benötigt einen AD-Umsetzer als zentrales Hardwareelement, da erst die Wandlung des analogen Eingangssignals in digitale Messwerte die weitere Speicherung, Verarbeitung und Anzeige ermöglicht. Für die Auswahl steht die Topologie am Anfang, weil sie Abtastrate, erreichbare Auflösung, Latenz, Leistungsaufnahme und den Implementierungsaufwand bestimmt.\\
 
-Für ein USB-Oszilloskop bieten sich Flash- und Pipeline-Topologien an, da beide hohe Abtastraten für breitbandige Zeitbereichsmessungen bereitstellen. Andere Varianten wie SAR oder Delta-Sigma werden in den Quellen überwiegend mittleren Geschwindigkeiten oder schmalbandigen Präzisionsaufgaben zugeordnet und sind somit für ein USB-Oszilloskop irrelevant \textbf{(genaue Quelle?)} (Monolithic Power Systems o. J.; Analog Devices 2001).\\
+Für ein USB-Oszilloskop bieten sich Flash- und Pipeline-Topologien an, da beide hohe Abtastraten für breitbandige Zeitbereichsmessungen bereitstellen. Andere Varianten wie SAR oder Delta-Sigma werden in den Quellen überwiegend mittleren Geschwindigkeiten oder schmalbandigen Präzisionsaufgaben zugeordnet und sind somit für ein USB-Oszilloskop irrelevant (vgl. \cite{MPS} und \cite{AnalogDevices2001a}).\\
 
 \subsubsection{Flash-ADC}
-\autoref{fig:2bit_flash_adc} zeigt das Prinzip eines Flash-AD-Umsetzers mit zwei Bit. Eine Widerstandsleiter erzeugt abgestufte Referenzen und eine Komparatorbank vergleicht das Eingangssignal mit diesen Schwellen. Das resultierende Muster wird durch eine Logikschaltung in einen Binärcode überführt. Flash-ADCs erreichen, durch diesen simplen Aufbau, die höchste Geschwindigkeit. Da die Zahl der Komparatoren jedoch $2^N-1$ beträgt, steigen bei hohen Auflösungen Komplexität, Fläche, Leistungsaufnahme sowie insbesondere die Herstellungskosten annähernd exponentiell an. \textbf{(genaue Quelle?)} (Wikimedia Commons 2011; Monolithic Power Systems o. J.; Analog Devices 2001).
+\autoref{fig:2bit_flash_adc} zeigt das Prinzip eines Flash-AD-Umsetzers mit zwei Bit. Eine Widerstandsleiter erzeugt abgestufte Referenzen und eine Komparatorbank vergleicht das Eingangssignal mit diesen Schwellen. Das resultierende Muster wird durch eine Logikschaltung in einen Binärcode überführt. Flash-ADCs erreichen, durch diesen simplen Aufbau, die höchste Geschwindigkeit. Da die Zahl der Komparatoren jedoch $2^N-1$ beträgt, steigen bei hohen Auflösungen Komplexität, Fläche, Leistungsaufnahme sowie insbesondere die Herstellungskosten annähernd exponentiell an (vgl. \cite{MPS} und \cite{AnalogDevices2001b}).
 
 \begin{figure}[H]
 	\centering
@@ -294,7 +325,7 @@ Für ein USB-Oszilloskop bieten sich Flash- und Pipeline-Topologien an, da beide
 \end{figure}
 
 \subsubsection{Pipeline-ADC}
-Eine Alternative zur geringeren Skalierbarkeit des Flash-ADCs ist der Pipeline-ADC, der auch im Projekt zur Anwendung kommt. Er baut funktional auf dem Flash-Prinzip auf, indem mehrere niedrigauflösende Flash-ADCs in Stufen hintereinandergeschaltet werden. Am Eingang tastet eine Sample-and-Hold-Stufe das Signal ab. Jede Stufe wandelt in wenige Bits, rekonstruiert den quantisierten Anteil über einen DAC, bildet den Restfehler im Subtrahierer und verstärkt diesen für die nächste Stufe. Durch Überlappbits und digitale Fehlerkorrektur können die Genauigkeitsanforderungen an die einzelnen Stufen reduziert werden und die Durchsatzraten erhöht. Durch diesen Aufbau steigt der Aufwand mit zunehmender Auslösung nur linear an. Bauartbedingt entsteht allerdings eine definierte Zykluslatenz, die in ganzen oder halben Taktzyklen angegeben wird. Diese Latenz ist der entscheidende Nachteil eines Pipeline ADCs \textbf{(genaue Quelle?)}.
+Eine Alternative zur geringeren Skalierbarkeit des Flash-ADCs ist der Pipeline-ADC, der auch im Projekt zur Anwendung kommt. Er baut funktional auf dem Flash-Prinzip auf, indem mehrere niedrigauflösende Flash-ADCs in Stufen hintereinandergeschaltet werden. Am Eingang tastet eine Sample-and-Hold-Stufe das Signal ab. Jede Stufe wandelt in wenige Bits, rekonstruiert den quantisierten Anteil über einen DAC, bildet den Restfehler im Subtrahierer und verstärkt diesen für die nächste Stufe. Durch Überlappbits und digitale Fehlerkorrektur können die Genauigkeitsanforderungen an die einzelnen Stufen reduziert werden und die Durchsatzraten erhöht. Durch diesen Aufbau steigt der Aufwand mit zunehmender Auslösung nur linear an. Bauartbedingt entsteht allerdings eine definierte Zykluslatenz, die in ganzen oder halben Taktzyklen angegeben wird. Diese Latenz ist der entscheidende Nachteil eines Pipeline ADCs (vgl. \cite{MPS} und \cite{AnalogDevices2001c}).
 
 \begin{figure}[H]
 	\centering
@@ -516,6 +547,7 @@ Nur Bus-Master (z.B.: Prozessor, DMA-Controller (in \autoref{fig:sysarch_stm32f7
 \pagebreak
 
 \subsection{Digitale Filterung (Preprocessing)}
+\label{subsec:digital_filtering}
 \href{https://www.analog.com/en/resources/technical-books/scientist_engineers_guide.html}{The Scientist \& Engineers Guide to Digital Signal Processing, 1999}
 
 \pagebreak
@@ -692,12 +724,56 @@ Für eine störungsfreie Datenaufnahme muss der Datentransfer exakt auf den ADC-
 
 \subsubsection{Konzept der Firmware als FSM}
 
+
+
 \pagebreak
 
 
 \subsubsection{Preprocessing-Konzept}
 
-\emph{Umrechnung 12bit signed (ADC) in 16bit signed}
+
+\underline{Umrechnung 12bit signed (ADC) in 16bit signed}\\
+Die Übertragung der Abtastwerte erfolgt in Einheiten von Halfwords (2 Byte). Da die Rohdaten des ADCs als 12-Bit signed Integer vorliegen, werden sie vor der Übertragung in einen gängigen Datentyp umgerechnet. Verwendet wird dabei ein 16-Bit signed Integer (\texttt{int16\_t} in C), da ein nativer 12-Bit Integer-Datentyp nicht existiert.\\
+Durch diese Umwandlung können die Daten auf der PC-Seite direkt weiterverarbeitet werden, ohne dass zusätzliche komplexe Konvertierungsschritte erforderlich sind. Insbesondere kann die Empfangssoftware (Python-Anwendung) die empfangenen Werte unmittelbar als 16-Bit signed Integer interpretieren und anschließend in den gewünschten Zieldatentyp umwandeln. Ein weiterer Vorteil der Umrechnung liegt in der verbesserten internen Weiterverarbeitung auf Mikrocontroller-Seite. So konnten die Daten vor dem Versand beispielsweise effizient für die Anwendung eines gleitenden Mittelwertfilters aufbereitet werden (vgl. nächster Abschnitt).\\
+
+Nachfolgend sind mögliche Algorithmen als Python-Code beschrieben:\\
+
+\textbf{1. Sign-Extend (Shift-Methode)}
+\begin{lstlisting}[language=Python, caption=Sign-extend (Arithmetisches Shift schiebt MSB nach)]
+def sign_extend_12_to_16(value12: int) -> int:
+    # 12-Bit Zahl um 4 nach links, dann arithmetisch nach rechts
+    return (value12 << 4) >> 4
+\end{lstlisting}
+
+\textbf{2. Zweierkomplement rückwärts: invertieren → +1}
+\begin{lstlisting}[language=Python, caption=Zweierkomplement rückwärts aufgelöst.]
+def twos_complement_backward_invert_plus1(value12: int) -> int:
+	if value12 & 0x800:  # Vorzeichenbit pruefen
+		inverted = (~value12) & 0xFFF  # Nur 12 Bits
+		magnitude = inverted + 1
+		return -magnitude
+	else:
+		return value12
+\end{lstlisting}
+
+\pagebreak
+
+\textbf{3. Zweierkomplement rückwärts: -1 → invertieren}
+\begin{lstlisting}[language=Python, caption=Alternative zu 2.: Erst -1 $\rightarrow$ dann invertieren.]
+def twos_complement_backward_minus1_invert(value12: int) -> int:
+	if value12 & 0x800:  # Vorzeichenbit pruefen
+		decreased = (value12 - 1) & 0xFFF
+		magnitude = (~decreased) & 0xFFF
+		return -magnitude
+	else:
+		return value12
+\end{lstlisting}
+
+\underline{Gleitender Mittelwertfilter}\\
+In \autoref{subsec:digital_filtering} wurden bereits die Grundlagen zur digitalen Filterung von Signalen geliefert. Diese wird in der Vorverarbeitung mittels \emph{gleitendem Mittelwertfilter} umgesetzt, welcher zufälliges Rauschen aus dem Signal herausfiltern kann. Dies ist insbesondere bei verrauschten Signalquellen mit kleiner Ausgangsamplitude interessant. Das Funktionsprinzip des Filters wurde bereits im oben genannten Grundlagenteil erläutert. Nachfolgend ist noch ein Pseudocode zu finden, der den Filteralgorithmus beschreibt (aus Signal Processing; \textbf{Quelle angeben}).\\
+
+\textbf{Filteralgorithmus angeben!}
+\pagebreak
 
 \subsection{Implementierung}
 
