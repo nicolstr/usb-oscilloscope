@@ -395,6 +395,7 @@ Damit gilt $INL[k]=\sum_{n=0}^kDNL[n]$. Die Angabe im Datenblatt entspricht $max
 \pagebreak
 
 \subsection{Endliche Zustandsautomaten (Finite State-Machines - FSMs)}
+\label{subsec:fsm}
 Die Firmware und Software des Projekts sind als synchronisierte Zustandsautomaten implementiert, um einen deterministischen Ablauf der beiden Programme zu gewährleisten.
 \subsubsection{Definition und formale Darstellung}
 Ein endlicher Automat (EA - engl. Finite State Machine, FSM) ist ein abstraktes Rechenmodell zur Beschreibung von Systemen. Dieser befindet sich in mindestens einem Zustand von einer Zahl endlicher Zustände. Zustandsübergänge (sog. Transitionen) erfolgen durch Eingaben oder das Auftreten von Ereignissen (spezielle Form der Eingabe).\\
@@ -718,14 +719,109 @@ Für eine störungsfreie Datenaufnahme muss der Datentransfer exakt auf den ADC-
 
 \pagebreak
 
-\subsubsection{Konzept der Kommunikation (USB CDC)}
-
-\pagebreak
-
 \subsubsection{Konzept der Firmware als FSM}
 
+\underline{Überblick}\\
+Die Firmware des USB-Oszilloskops wurde auf der Basis einer Finite State Machine (FSM) zur Steuerung der Betriebszustände erstellt. Dieser Ansatz ermöglicht eine klare Trennung der verschiedenen Funktionsphasen sowie eine strukturierte und erweiterbare Implementierung. Die FSM verarbeitet asynchrone Ereignisse (Events; Präfix \texttt{EV\_}), die aus unterschiedlichen Quellen stammen können, wie z.B.:
 
+\begin{itemize}
+	\item Benutzereingaben (z. B. Button auf dem Board),
+	\item Befehle der PC-Anwendung über USB,
+	\item interne Signale der Hardware, wie z. B. Abschluss eines DMA-Transfers.
+\end{itemize}
 
+Die fachlichen Grundlagen zu FSMs wurden bereits in \autoref{subsec:fsm} erläutert.\\
+
+Um diese Ereignisse effizient zu verarbeiten, wird eine Event-Queue verwendet. Jedes Event wird in diese Warteschlange (Queue) eingereiht („enqueued“). Die FSM verarbeitet die Ereignisse dann sequenziell, wodurch sichergestellt wird, dass auf asynchrone Signale deterministisch reagiert wird.\\
+
+\underline{Architektur der FSM}\\
+Die FSM besteht aus mehreren definierten Zuständen, die jeweils einer bestimmten Betriebsphase des Oszilloskops entsprechen. Jeder Zustand wird durch eine eigene Funktion realisiert. Diese Funktionen beinhalten drei Hauptbereiche:
+
+\begin{enumerate}
+	\item \emph{Entry-Block:}\\
+	Wird beim Eintritt in einen Zustand ausgeführt (z. B. Initialisierungen, Statusmeldungen).
+
+	\item \emph{Event-Handling:}\\
+	Reaktion auf ankommende Events innerhalb des aktuellen Zustands.
+
+	\item \emph{Exit-Block:}\\
+	Wird beim Verlassen des Zustands ausgeführt (z. B. Aufräumarbeiten).
+\end{enumerate}
+
+Das State Diagram (siehe \autoref{fig:firmware_fsm}) visualisiert die Abfolge der Firmwarezustände sowie die möglichen Übergänge basierend auf bestimmten Events. Die Hauptzustände sind \autoref{table:states_firmware} zu entnehmen.
+\pagebreak
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{|c|c|}
+\hline 
+\textbf{Zustand} & \textbf{Beschreibung} \\ 
+\hline 
+\hline
+Init & Initialisierung der Hardware-Peripherie. Wird nur einmal beim Start ausgeführt. \\ 
+\hline 
+Idle & Warten auf Konfigurationsbefehle oder Startsignal der PC-Anwendung. \\ 
+\hline 
+Acquisition Start & Aktivieren des Triggers und Starten der Datenerfassung. \\ 
+\hline 
+Acquisition Done & Abschluss der Datenerfassung, Vorbereitung der Daten für die Übertragung. \\ 
+\hline 
+Data Transmission & Übertragung der erfassten Daten an den PC. \\ 
+\hline 
+Wait for ACK & Warten auf Bestätigung vom PC, ob ein weiterer Erfassungsvorgang gestartet werden soll. \\ 
+\hline 
+\end{tabular}
+\caption{Übersicht über die Hauptzustände der Firmware-FSM}
+\label{table:states_firmware}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.12]{StateDiagram_Firmware_V1.png} 
+	\caption{Zustandsdiagramm für die Firmware}
+	\label{fig:firmware_fsm}
+\end{figure}
+
+\underline{Event-Queue}\\
+Die FSM verarbeitet Ereignisse über eine zentrale Event-Queue.
+Dies erlaubt eine entkoppelte Kommunikation zwischen verschiedenen Modulen der Firmware und stellt sicher, dass Ereignisse nicht verloren gehen, auch wenn mehrere nahezu gleichzeitig auftreten.\\
+
+Prinzipieller Ablauf:
+
+\begin{enumerate}
+	\item Ein Modul erkennt ein Ereignis (z. B. Button-Druck, DMA-Abschluss, USB-Befehl).
+	\item Das Ereignis wird als Event-Code in die Queue geschrieben („enqueued“).
+	\item Die Hauptschleife der Firmware liest fortlaufend Events aus der Queue („dequeued“) und leitet sie an die FSM weiter.
+	\item Die FSM entscheidet anhand des aktuellen Zustands und des Event-Codes, wie reagiert wird und ob ein Zustandswechsel nötig ist.
+\end{enumerate}
+
+Vorteile dieses Ansatzes:
+
+\begin{itemize}
+	\item Asynchrones Verhalten wird klar handhabbar.
+	\item Saubere Trennung zwischen Ereigniserzeugung und -verarbeitung.
+	\item Erweiterbar für zukünftige Ereignisse, ohne die Hauptarchitektur zu ändern.
+\end{itemize}
+
+\underline{Zustandsübergänge}
+
+Die wichtigsten Zustandsübergänge lassen sich wie folgt zusammenfassen:
+\begin{itemize}
+	\item \emph{Systemstart:}\\
+	Init → Idle nach erfolgreicher Initialisierung.
+	\item \emph{Start der Datenerfassung:}\\
+	Idle → Acquisition Start nach Empfang des Startbefehls von der PC-Anwendung.
+	\item \emph{Abschluss der Datenerfassung:}\\
+	Acquisition Start → Acquisition Done nach Abschluss der DMA-Operation.
+	\item \emph{Übertragung der Daten:}\\
+	Acquisition Done → Data Transmission sobald PC signalisiert, dass er bereit ist.
+	\item \emph{ACK-Verarbeitung:}
+	\begin{itemize}
+	\item Wait for ACK → Acquisition Start für weitere Messung.
+	\item Wait for ACK → Idle für Beendigung der Erfassung.
+	\end{itemize}
+\end{itemize}
 \pagebreak
 
 
@@ -739,7 +835,7 @@ Durch diese Umwandlung können die Daten auf der PC-Seite direkt weiterverarbeit
 Nachfolgend sind mögliche Algorithmen als Python-Code beschrieben:\\
 
 \textbf{1. Sign-Extend (Shift-Methode)}
-\begin{lstlisting}[language=Python, caption=Sign-extend (Arithmetisches Shift schiebt MSB nach)]
+\begin{lstlisting}[language=Python, caption=Sign-extend (Arithmetisches Shift schiebt das MSB nach)]
 def sign_extend_12_to_16(value12: int) -> int:
     # 12-Bit Zahl um 4 nach links, dann arithmetisch nach rechts
     return (value12 << 4) >> 4
@@ -784,6 +880,8 @@ In \autoref{subsec:digital_filtering} wurden bereits die Grundlagen zur digitale
 \pagebreak
 
 \section{Schnittstelle Firmware - Software}
+
+\subsection{Konzept der Kommunikation (USB CDC)}
 
 \pagebreak
 
