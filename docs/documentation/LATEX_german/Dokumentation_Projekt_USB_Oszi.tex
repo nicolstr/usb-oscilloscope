@@ -198,7 +198,7 @@ Für eine gut auswertbare Darstellung sind etwa zehn Stützstellen je Periode zw
 	\label{fig:linear_si_display}
 \end{figure}
 
-In der Praxis werden für die Digitalisierung schnelle Flash-ADUs sowie mehrstufige Sub-ranging- / Pipeline‑Varianten eingesetzt. Diese ermöglichen hohe Raten bei moderater vertikaler Auflösung. Übliche Geräte arbeiten mit acht Bit vertikaler Auflösung. Je nach Architektur sind höhere Auflösungen möglich (vgl. \cite[S. 114-119]{Bernstein2023}). Für die Datenaufnahme stehen verschiedene Acquisition-Modi zur Verfügung. Der direkte Modus liefert äquidistante Samples. Min-Max oder Peak-Detect erfasst Extremwerte innerhalb eines Abtastintervalls und macht kurze Spikes sichtbar. Average reduziert Rauschen durch wiederholtes Mitteln. Single Shot zeichnet einmalige Ereignisse auf und der Roll-Modus zeigt sehr langsame Verläufe kontinuierlich an (vgl. \cite[S. 220f]{Muehl2020}). Die Genauigkeit wird wesentlich durch die Abtastrate und Abtaststrategie, Interpolation und Quantisierung sowie durch die Eingangsbeschaltung bestimmt. Bei Unterabtastung droht Aliasing und die Rekonstruktion wird unzuverlässig (vgl. \cite[S. ??]{Muehl2020}, Grundlagen zur Abtastung und Quantisierung). Wichtige Kenngrößen DSOs sind analoge Bandbreite, Abtastrate, vertikale Auflösung, Speichertiefe, Triggerfunktionen, Eingangsimpedanz, analoge Eingangsspannung sowie Anzeige und Darstellungsoptionen. Über die Kurvendarstellung hinaus gehören auch automatische Messfunktionen zum Grundumfang.
+In der Praxis werden für die Digitalisierung schnelle Flash-ADUs sowie mehrstufige Sub-ranging- / Pipeline‑Varianten eingesetzt. Diese ermöglichen hohe Raten bei moderater vertikaler Auflösung. Übliche Geräte arbeiten mit acht Bit vertikaler Auflösung. Je nach Architektur sind höhere Auflösungen möglich (vgl. \cite[S. 114-119]{Bernstein2023}). Für die Datenaufnahme stehen verschiedene Acquisition-Modi zur Verfügung. Der direkte Modus liefert äquidistante Samples. Min-Max oder Peak-Detect erfasst Extremwerte innerhalb eines Abtastintervalls und macht kurze Spikes sichtbar. Average reduziert Rauschen durch wiederholtes Mitteln. Single Shot zeichnet einmalige Ereignisse auf und der Roll-Modus zeigt sehr langsame Verläufe kontinuierlich an (vgl. \cite[S. 220f]{Muehl2020}). Die Genauigkeit wird wesentlich durch die Abtastrate und Abtaststrategie, Interpolation und Quantisierung sowie durch die Eingangsbeschaltung bestimmt. Bei Unterabtastung droht Aliasing und die Rekonstruktion wird unzuverlässig (vgl. \cite[S. ??]{Muehl2020}, Grundlagen zur Abtastung und Quantisierung). Wichtige Kenngrößen von DSOs sind analoge Bandbreite, Abtastrate, vertikale Auflösung, Speichertiefe, Triggerfunktionen, Eingangsimpedanz, analoge Eingangsspannung sowie Anzeige und Darstellungsoptionen. Über die Kurvendarstellung hinaus gehören auch automatische Messfunktionen zum Grundumfang.
 
 \subsubsection{Trigger}
 
@@ -527,7 +527,7 @@ Bei einem Timer-Überlauf des Hardware-Timers TIM1 findet ein DMA-Request statt 
 	\label{fig:periph_to_mem}
 \end{figure}
 
-Im Abtastsystem ist keine Inkrementierung der Quelladresse notwendig, da nur das Eingangsdatenregister ausgelesen werden muss, welches die Schnittstelle zum parallelen ADC-Interface darstellt (siehe \autoref{dma_data_acq} im Entwurfsteil der FW).
+Im Abtastsystem ist keine Inkrementierung der Quelladresse notwendig, da nur das Eingangsdatenregister ausgelesen werden muss, welches die Schnittstelle zum parallelen ADC-Interface darstellt (siehe \autoref{fig:data_acq_dma} im Entwurfsteil der FW).
 
 \pagebreak
 
@@ -550,6 +550,8 @@ Nur Bus-Master (z.B.: Prozessor, DMA-Controller (in \autoref{fig:sysarch_stm32f7
 \subsection{Digitale Filterung (Preprocessing)}
 \label{subsec:digital_filtering}
 \href{https://www.analog.com/en/resources/technical-books/scientist_engineers_guide.html}{The Scientist \& Engineers Guide to Digital Signal Processing, 1999}
+
+\cite{Smith1999}
 
 \pagebreak
 
@@ -779,7 +781,7 @@ Wait for ACK & Warten auf Bestätigung vom PC, ob ein weiterer Erfassungsvorgang
 \begin{figure}[H]
 	\centering
     \includegraphics[scale=0.12]{StateDiagram_Firmware_V1.png} 
-	\caption{Zustandsdiagramm für die Firmware}
+	\caption{Zustandsdiagramm der Firmware}
 	\label{fig:firmware_fsm}
 \end{figure}
 
@@ -866,9 +868,16 @@ def twos_complement_backward_minus1_invert(value12: int) -> int:
 \end{lstlisting}
 
 \underline{Gleitender Mittelwertfilter}\\
-In \autoref{subsec:digital_filtering} wurden bereits die Grundlagen zur digitalen Filterung von Signalen geliefert. Diese wird in der Vorverarbeitung mittels \emph{gleitendem Mittelwertfilter} umgesetzt, welcher zufälliges Rauschen aus dem Signal herausfiltern kann. Dies ist insbesondere bei verrauschten Signalquellen mit kleiner Ausgangsamplitude interessant. Das Funktionsprinzip des Filters wurde bereits im oben genannten Grundlagenteil erläutert. Nachfolgend ist noch ein Pseudocode zu finden, der den Filteralgorithmus beschreibt (aus Signal Processing; \textbf{Quelle angeben}).\\
+In \autoref{subsec:digital_filtering} wurden bereits die Grundlagen zur digitalen Filterung von Signalen geliefert. Im Projekt wurde die DSP mittels \emph{gleitendem Mittelwertfilter} umgesetzt, welcher zufälliges Rauschen aus dem Signal herausfiltern kann. Dies ist insbesondere bei verrauschten Signalquellen mit kleiner Ausgangsamplitude relevant. In Abbildung \autoref{fig:moving_avg_filter_algorithm} ist ein Filteralgorithmus beschrieben, der einen gleitenden Mittelwertfilter umsetzt (vgl. \cite[S. 277-284]{Smith1999}).
 
-\textbf{Filteralgorithmus angeben!}
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{Moving_Average_Filter_Algorithm.png} 
+	\caption{Pseudocode: Moving-Average-Filter aus \cite[S. 278]{Smith1999}}
+	\label{fig:moving_avg_filter_algorithm}
+\end{figure}
+
+Dieser Pseudocode-Ausschnitt war die Basis für die Implementierung des gleitenden Mittelwertfilters.
 \pagebreak
 
 \subsection{Implementierung}
