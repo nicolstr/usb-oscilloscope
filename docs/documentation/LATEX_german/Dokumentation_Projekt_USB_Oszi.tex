@@ -549,11 +549,90 @@ Nur Bus-Master (z.B.: Prozessor, DMA-Controller (in \autoref{fig:sysarch_stm32f7
 
 \subsection{Digitale Filterung (Preprocessing)}
 \label{subsec:digital_filtering}
-\href{https://www.analog.com/en/resources/technical-books/scientist_engineers_guide.html}{The Scientist \& Engineers Guide to Digital Signal Processing, 1999}
 
-\cite{Smith1999}
+\subsubsection{Motivation und Grundlagen digitaler Filterung}
+Digitale Filterung ist ein zentrales Element der digitalen Signalverarbeitung (DSP). Filter werden im Allgemeinen für zwei Hauptzwecke eingesetzt:
+\begin{itemize}
+	\item Trennung von Signalen, die miteinander überlagert wurden,
+
+	\item Wiederherstellung von Signalen, die auf ihrem Übertragungsweg oder bei der Messung verzerrt wurden \cite[S. 261]{Smith1999}.
+\end{itemize}
+
+Während analoge Filter durch elektronische Schaltungen realisiert werden, bieten digitale Filter eine wesentlich höhere Präzision und Flexibilität. Sie können sehr steile Übergänge zwischen Durchlass- und Sperrbereich (passband und stopband) erzeugen und zeigen kaum Toleranzprobleme wie analoge Filter. Beim analogen Filterdesign ist die Beherrschung von Bauteiltoleranzen von wesentlicher Bedeutung \cite[S. 262]{Smith1999}. Digitale Filterung bietet sich bei Anwendungen mit Mikrocontrollern an, da die Filter-Algorithmen direkt einprogrammiert werden können und eine analoge Filterschaltung ersetzen oder reduzieren können.
+
+\subsubsection{Filterklassifikation}
+
+\underline{Einteilung nach Signalcharakteristik}\\
+Die Einteilung der Filter richtet sich einerseits danach, in welcher Form die Information im Signal enthalten ist \cite[S. 265]{Smith1999}.
+
+\begin{itemize}
+	\item \emph{Zeitbereich (time-domain):}\\
+	Die Information ist direkt in der Form des Signals enthalten.\\
+	Bsp.: Glätten von Messdaten, DC-Offset-Entfernung, Signalerkennung.\\
+	$\rightarrow$ Die Sprungantwort (step-response) ist hier entscheidend.
+
+	\item \emph{Frequenzbereich (frequency-domain):}\\
+	Die Information steckt in den Frequenzkomponenten des Signals.\\
+	Bsp.: Trennung von Audiosignalen oder Herausfiltern bestimmter Störfrequenzen.\\
+	$\rightarrow$ Der Frequenzgang (frequency-response) ist hier entscheidend.
+\end{itemize}
 
 \pagebreak
+
+\underline{Einteilung nach Implementierung}\\
+Die Einteilung der Filter richtet sich einerseits danach, in welcher Form die Information im Signal enthalten ist \cite[S. 265]{Smith1999}.
+
+\begin{itemize}
+	\item \emph{FIR-Filter (Finite Impulse Response):}\\
+	Umsetzung erfolgt durch \textbf{Faltung (Convolution)} des Eingangssignals mit einem endlichen Filterkern (\emph{engl. filter kernel}). Ein Ausgangswert wird berechnet, indem Eingangswerte mit zuvor definierten Gewichtungsfaktoren multipliziert und anschließend aufaddiert werden.\\
+	Eigenschaften:
+	\begin{itemize}
+		\item Stabil und vorhersagbar,
+		\item Endliche Impulsantwort,
+		\item Einfach zu implementieren, aber rechenintensiv.
+		\item Beispiel: Moving Average Filter.
+	\end{itemize}
+
+	\item \emph{IIR-Filter (Infinite Impulse Response):}\\
+	Umsetzung durch \textbf{Rekursion}, bei der sowohl aktuelle Eingangswerte als auch frühere Ausgangswerte zur Berechnung herangezogen werden.\\
+	Eigenschaften:
+	\begin{itemize}
+		\item Sehr effizient (weniger Rechenaufwand),
+		\item Theoretisch unendliche Impulsantwort,
+		\item Gefahr der Instabilität bei fehlerhafter Parametrierung.
+		\item Beispiel: digitale Tiefpassfilter auf Basis analoger Schaltungen.	
+	\end{itemize}
+\end{itemize}
+
+\pagebreak
+
+\subsubsection{Gleitender Mittelwertfilter}
+
+Der \emph{gleitende Mittelwertfilter (engl. Moving Average Filter - MAF)} ist einer der einfachsten und am häufigsten eingesetzten digitalen Filter. Er arbeitet, indem er für jedes Ausgabesample den Mittelwert aus einer festen Anzahl aufeinanderfolgender Eingangssamples berechnet \cite[S. 277]{Smith1999}.
+Seine Hauptaufgabe besteht darin, zufälliges Rauschen zu reduzieren (siehe \autoref{fig:mov_avg_filter_signal}), während plötzliche Signaländerungen (Steps) möglichst gut erhalten bleiben.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.65]{moving_average_filter_signal_smith.png} 
+	\caption{\centering Anwendung eines MAF unterschiedlicher Fensterbreite\\
+				\footnotesize
+				(a) Eingangssignal, (b) Ausgangssignal $M=11$, (c) Ausgangssignal $M=51$\\				(Figure 15-1 aus \cite[S. 279]{Smith1999})}
+	\label{fig:mov_avg_filter_signal}
+\end{figure}
+
+\underline{Grundidee}
+Für ein Fenster der Breite $M$ ergibt sich das Ausgabesignal $y[i]$ aus dem Eingangssignal $x[i]$ durch:
+\begin{equation}
+	y[i]=\frac{1}{M}\sum_{j=0}^{M-1}x[i+j]
+\end{equation}
+Es ist zu erkennen, dass die rechtsseitigen Eingangswerte zum Ausgangswert aufsummiert werden. Eine alternative Umsetzung wäre es die auzusummierenden Eingangswerte symmetrisch um den Ausgangswert zu wählen (Beispiel für einen Ausgangswert):
+\begin{equation}
+	y[80]=\frac{x[78]+x[79]+x[80]+x[81]+x[82]}{5}
+\end{equation}
+
+Damit entspricht der Moving Average Filter einer Faltung des Eingangssignals mit einem rechteckigen Filterkern \cite[S. 277f]{Smith1999}.\\
+
+Für das Projekt wurde der Filter kumulativ implementiert und nach dem Algorithmus in \autoref{fig:moving_avg_filter_algorithm} im \autoref{subsubsec:preprocessing_concept} umgesetzt.
 
 %%%%%%%%%%% Projektkonzeption %%%%%%%%%%%
 \section{Projektkonzeption}
@@ -828,7 +907,7 @@ Die wichtigsten Zustandsübergänge lassen sich wie folgt zusammenfassen:
 
 
 \subsubsection{Preprocessing-Konzept}
-
+\label{subsubsec:preprocessing_concept}
 
 \underline{Umrechnung 12bit signed (ADC) in 16bit signed}\\
 Die Übertragung der Abtastwerte erfolgt in Einheiten von Halfwords (2 Byte). Da die Rohdaten des ADCs als 12-Bit signed Integer vorliegen, werden sie vor der Übertragung in einen gängigen Datentyp umgerechnet. Verwendet wird dabei ein 16-Bit signed Integer (\texttt{int16\_t} in C), da ein nativer 12-Bit Integer-Datentyp nicht existiert.\\
@@ -868,11 +947,11 @@ def twos_complement_backward_minus1_invert(value12: int) -> int:
 \end{lstlisting}
 
 \underline{Gleitender Mittelwertfilter}\\
-In \autoref{subsec:digital_filtering} wurden bereits die Grundlagen zur digitalen Filterung von Signalen geliefert. Im Projekt wurde die DSP mittels \emph{gleitendem Mittelwertfilter} umgesetzt, welcher zufälliges Rauschen aus dem Signal herausfiltern kann. Dies ist insbesondere bei verrauschten Signalquellen mit kleiner Ausgangsamplitude relevant. In Abbildung \autoref{fig:moving_avg_filter_algorithm} ist ein Filteralgorithmus beschrieben, der einen gleitenden Mittelwertfilter umsetzt (vgl. \cite[S. 277-284]{Smith1999}).
+In \autoref{subsec:digital_filtering} wurden bereits die Grundlagen zur digitalen Filterung von Signalen geliefert. Im Projekt wurde die DSP mittels \emph{gleitendem Mittelwertfilter} umgesetzt, welcher zufälliges Rauschen aus dem Signal herausfiltern kann. Dies ist insbesondere bei verrauschten Signalquellen mit kleiner Ausgangsamplitude relevant. In \autoref{fig:moving_avg_filter_algorithm} ist ein Filteralgorithmus beschrieben, der einen kumulativen gleitenden Mittelwertfilter umsetzt (vgl. \cite[S. 277-284]{Smith1999}). Die Grundlagen des Filters wurden ebenfalls bereits in \autoref{subsec:digital_filtering} erläutert.
 
 \begin{figure}[H]
 	\centering
-    \includegraphics[scale=0.4]{Moving_Average_Filter_Algorithm.png} 
+    \includegraphics[scale=0.4]{moving_average_filter_algorithm_smith.png} 
 	\caption{Pseudocode: Moving-Average-Filter aus \cite[S. 278]{Smith1999}}
 	\label{fig:moving_avg_filter_algorithm}
 \end{figure}
