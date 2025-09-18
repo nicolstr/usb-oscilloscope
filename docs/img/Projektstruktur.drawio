@@ -1,17 +1,17 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.0.9 Chrome/128.0.6613.186 Electron/32.2.5 Safari/537.36" version="26.0.9">
   <diagram name="Page-1" id="0cGqyL7DG-wcE4ZlD6Sr">
-    <mxGraphModel dx="1075" dy="518" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="840" dy="497" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="7TDlWVTvPXgTqfUWaNOH-13" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#FF99FF;opacity=40;fontStyle=1;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="100" y="60" width="360" height="280" as="geometry" />
+        </mxCell>
         <mxCell id="7TDlWVTvPXgTqfUWaNOH-17" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#CCFF99;opacity=50;fontStyle=1;fontSize=14;" parent="1" vertex="1">
           <mxGeometry x="690" y="60" width="160" height="280" as="geometry" />
         </mxCell>
         <mxCell id="7TDlWVTvPXgTqfUWaNOH-16" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#99FFFF;opacity=50;fontStyle=1;fontSize=14;" parent="1" vertex="1">
           <mxGeometry x="460" y="60" width="230" height="280" as="geometry" />
-        </mxCell>
-        <mxCell id="7TDlWVTvPXgTqfUWaNOH-13" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#FF99FF;opacity=40;fontStyle=1;fontSize=14;" parent="1" vertex="1">
-          <mxGeometry x="100" y="60" width="360" height="280" as="geometry" />
         </mxCell>
         <mxCell id="7TDlWVTvPXgTqfUWaNOH-2" value="power supply" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fontStyle=1;fontSize=14;" parent="1" vertex="1">
           <mxGeometry x="120" y="80" width="120" height="40" as="geometry" />
@@ -90,13 +90,13 @@
         <mxCell id="7TDlWVTvPXgTqfUWaNOH-36" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;spacing=2;" parent="1" vertex="1">
           <mxGeometry x="198" y="178" width="4" height="4" as="geometry" />
         </mxCell>
-        <mxCell id="1J29-MBzdCk6qC3IPTF7-10" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;strokeColor=none;fillColor=light-dark(#ccebff, #ededed);" vertex="1" parent="1">
+        <mxCell id="1J29-MBzdCk6qC3IPTF7-10" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;strokeColor=none;fillColor=light-dark(#99FFFF,#EDEDED);opacity=50;" parent="1" vertex="1">
           <mxGeometry x="280" y="280" width="30" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="1J29-MBzdCk6qC3IPTF7-11" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;strokeColor=none;fillColor=light-dark(#ccebff, #ededed);" vertex="1" parent="1">
+        <mxCell id="1J29-MBzdCk6qC3IPTF7-11" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;strokeColor=none;fillColor=light-dark(#99FFFF,#EDEDED);opacity=50;" parent="1" vertex="1">
           <mxGeometry x="295" y="280" width="30" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="1J29-MBzdCk6qC3IPTF7-12" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;strokeColor=none;fillColor=light-dark(#ccebff, #ededed);" vertex="1" parent="1">
+        <mxCell id="1J29-MBzdCk6qC3IPTF7-12" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;strokeColor=none;fillColor=light-dark(#99FFFF,#EDEDED);opacity=50;" parent="1" vertex="1">
           <mxGeometry x="310" y="280" width="30" height="40" as="geometry" />
         </mxCell>
         <mxCell id="7TDlWVTvPXgTqfUWaNOH-11" value="trigger" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fontStyle=1;fontSize=14;" parent="1" vertex="1">
