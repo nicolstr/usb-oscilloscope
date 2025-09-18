@@ -621,11 +621,11 @@ Seine Hauptaufgabe besteht darin, zufälliges Rauschen zu reduzieren (siehe \aut
 \end{figure}
 
 \underline{Grundidee}
-Für ein Fenster der Breite $M$ ergibt sich das Ausgabesignal $y[i]$ aus dem Eingangssignal $x[i]$ durch:
+Für ein Fenster der Breite $M$ ergibt sich das Ausgangssignal $y[i]$ aus dem Eingangssignal $x[i]$ durch:
 \begin{equation}
 	y[i]=\frac{1}{M}\sum_{j=0}^{M-1}x[i+j]
 \end{equation}
-Es ist zu erkennen, dass die rechtsseitigen Eingangswerte zum Ausgangswert aufsummiert werden. Eine alternative Umsetzung wäre es die auzusummierenden Eingangswerte symmetrisch um den Ausgangswert zu wählen (Beispiel für einen Ausgangswert):
+Es ist zu erkennen, dass die rechtsseitigen Eingangswerte zum Ausgangswert aufsummiert werden. Eine alternative Umsetzung wäre es die aufzusummierenden Eingangswerte symmetrisch um den Ausgangswert zu wählen (Beispiel für einen Ausgangswert):
 \begin{equation}
 	y[80]=\frac{x[78]+x[79]+x[80]+x[81]+x[82]}{5}
 \end{equation}
