@@ -499,23 +499,22 @@ class General(QWidget):
     def __init__(self, command_queue):
         super().__init__()
         self.command_queue = command_queue
-        #self.status_queue = status_queue
-        self.gui_fsm = UsbOsziGUI()
-        self.matplotlib_widget = MatplotlibWidget()
-        self.toolbar = NavigationToolbar(self.matplotlib_widget, self)
+        self.current_timebase = 1e-6
+        self.current_timebase_idx = 0
+        self.current_vdiv = 1
+        self.current_vdiv_idx = 0
+        self.current_yoffset = 0
+        self.current_yoffset_idx = 0
+        self.current_xoffset = 0
+        self.current_xoffset_idx = 0
+        self.max_samplerate = 10_000_000
+        self.is_run_mode = False # Flag, um den Betriebsmodus (Single/Run) zu speichern
+
         self.data_buffer = []
         self.samplingrate = 10_000_000
         self.reference_voltage = 0
         self.num_xdiv = 10
         self.num_ydiv = 8
-
-        self.current_timebase = 1e-6
-        self.current_vdiv = 1
-        self.current_yoffset = 0
-        self.current_xoffset = 0
-        self.max_samplerate = 10_000_000
-        self.is_run_mode = False # Flag, um den Betriebsmodus (Single/Run) zu speichern
-
 
         self.timebase_values = [
             0.1e-6, 0.2e-6, 0.5e-6,   # 0.1, 0.2, 0.5 µs/div
@@ -528,7 +527,7 @@ class General(QWidget):
             1.0                       # 1 s/div
         ]
         self.vdiv_values = [
-            0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000
+            0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000
         ]  # in V/div, wie echte Oszilloskope
 
         # Variable zum Speichern des letzten FSM-Status
@@ -544,6 +543,10 @@ class General(QWidget):
 
         # Einstellungen beim Start der GUI laden
         self.load_settings()
+
+        self.gui_fsm = UsbOsziGUI()
+        self.matplotlib_widget = MatplotlibWidget()
+        self.toolbar = NavigationToolbar(self.matplotlib_widget, self)
 
         self.initUI()
 
@@ -617,15 +620,16 @@ class General(QWidget):
         self.timebase_dial = QDial()
         self.timebase_dial.setMinimum(0)
         self.timebase_dial.setMaximum(len(self.timebase_values)-1)
-        self.timebase_dial.setValue(self.current_timebase)
-        self.on_timebase_dial_change(10) # Standard: 10 us/div
+        self.timebase_dial.setValue(self.current_timebase_idx)
+        self.on_timebase_dial_change(self.current_timebase_idx)
         self.timebase_dial.setWrapping(False)
         self.timebase_dial.setFixedSize(120, 120)      # großer Dial
 
         self.vdiv_dial = QDial()
         self.vdiv_dial.setMinimum(0)
         self.vdiv_dial.setMaximum(len(self.vdiv_values)-1)
-        self.vdiv_dial.setValue(self.current_vdiv)  # Standard: 1 V/div
+        self.vdiv_dial.setValue(self.current_vdiv_idx)  # Wert auf letzen Wert setzen oder Standardwert
+        self.on_vdiv_dial_change(self.current_vdiv_idx)
         self.vdiv_dial.setWrapping(False)
         self.vdiv_dial.setFixedSize(120, 120)      # großer Dial
 
@@ -633,7 +637,8 @@ class General(QWidget):
         self.yoffset_dial.setRange(-100,100)
         self.yoffset_dial.setMinimum(-100)
         self.yoffset_dial.setMaximum(100)
-        self.yoffset_dial.setValue(0)
+        self.yoffset_dial.setValue(self.current_yoffset_idx)
+        self.on_yoffset_changed(self.current_yoffset_idx)
         self.yoffset_dial.setWrapping(False)
         self.yoffset_dial.setFixedSize(60, 60)      # großer Dial
 
@@ -641,7 +646,8 @@ class General(QWidget):
         self.xoffset_dial.setRange(0,2000)
         self.xoffset_dial.setMinimum(0)
         self.xoffset_dial.setMaximum(2000)
-        self.xoffset_dial.setValue(0)
+        self.xoffset_dial.setValue(self.current_xoffset_idx)
+        self.on_xoffset_changed(self.current_xoffset_idx)
         self.xoffset_dial.setWrapping(False)
         self.xoffset_dial.setFixedSize(60, 60)         # kleiner Dial
 
@@ -950,14 +956,8 @@ class General(QWidget):
     
 
     def on_timebase_dial_change(self, idx):
+        self.current_timebase_idx = idx
         self.current_timebase = self.timebase_values[idx]
-        # if self.gui_fsm.current_state.id == "idle":
-        #     opt_samplingrate = self.calc_optimal_sampling()
-        #     self.send_sampling_to_uc(opt_samplingrate)
-        # else:
-        #     print(f"GUI: Cannot set frequency in current state: {self.gui_fsm.current_state.id}")
-        #     self.status_label.setText(f"Warning: Samplingrate only can set in idle state.")
-        #     self.status_clear_timer.start(3000) # 3 Sekunden anzeigen
         self.matplotlib_widget.update_axes_scaling(
                 self.num_xdiv, self.num_ydiv,
                 self.current_timebase, self.current_vdiv, self.current_xoffset, self.current_yoffset
@@ -965,25 +965,48 @@ class General(QWidget):
 
 
     def on_vdiv_dial_change(self, idx):
+        self.current_vdiv_idx = idx
         self.current_vdiv = self.vdiv_values[idx]
         # Achsen & Grid neu setzen bei Änderung der Amplitude:
         self.matplotlib_widget.update_axes_scaling(
             self.num_xdiv, self.num_ydiv,
             self.current_timebase, self.current_vdiv, self.current_xoffset, self.current_yoffset
         )
-        if self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < maximum(self.data_buffer) or self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < abs(minimum(self.data_buffer)):
-            self.status_label.setText(f"Warning: Values ​​are outside the displayed range")
-            self.status_clear_timer.start(3000) # 3 Sekunden anzeigen
+        has_data = (
+            isinstance(self.data_buffer, (list, np.ndarray)) and len(self.data_buffer) > 0
+            and not (
+                isinstance(self.data_buffer, np.ndarray)
+                and self.data_buffer.size == 0
+            )
+        )
+        if has_data:
+            if self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < maximum(self.data_buffer) or self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < abs(minimum(self.data_buffer)):
+                self.status_label.setText(f"Warning: Values ​​are outside the displayed range")
+                self.status_clear_timer.start(3000) # 3 Sekunden anzeigen
     
     def on_yoffset_changed(self, value):
+        self.current_yoffset_idx = value
         self.current_yoffset = value/100*self.current_vdiv*self.num_ydiv/2
         self.matplotlib_widget.update_axes_scaling(self.num_xdiv, self.num_ydiv, self.current_timebase, self.current_vdiv, self.current_xoffset, self.current_yoffset)
-        if self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < maximum(self.data_buffer) or self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < abs(minimum(self.data_buffer)):
-            self.status_label.setText(f"Warning: Values ​​are outside the displayed range")
-            self.status_clear_timer.start(3000) # 3 Sekunden anzeigen
+        has_data = (
+            isinstance(self.data_buffer, (list, np.ndarray)) and len(self.data_buffer) > 0
+            and not (
+                isinstance(self.data_buffer, np.ndarray)
+                and self.data_buffer.size == 0
+            )
+        )
+        if has_data:
+            if self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < maximum(self.data_buffer) or self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < abs(minimum(self.data_buffer)):
+                self.status_label.setText(f"Warning: Values ​​are outside the displayed range")
+                self.status_clear_timer.start(3000) # 3 Sekunden anzeigen
     
     def on_xoffset_changed(self, value):
-        self.current_xoffset = (1/self.samplingrate)*len(self.data_buffer)*(value/2000)
+        self.current_xoffset_idx = value
+        if len(self.data_buffer):
+            laenge = len(self.data_buffer)
+        else:
+            laenge = 200_000
+        self.current_xoffset = (1/self.samplingrate)*laenge*(value/2000)
         self.matplotlib_widget.update_axes_scaling(self.num_xdiv, self.num_ydiv, self.current_timebase, self.current_vdiv, self.current_xoffset, self.current_yoffset)
 
 
@@ -1104,10 +1127,10 @@ class General(QWidget):
     def save_settings(self):
         """Speichert die aktuellen GUI-Einstellungen in einer Datei."""
         settings = {
-            'vdiv': self.current_vdiv,
-            'timebase': self.current_timebase,
-            'xoffset': self.current_xoffset,
-            'yoffset': self.current_yoffset
+            'vdiv_idx': self.current_vdiv_idx,
+            'timebase_idx': self.current_timebase_idx,
+            'xoffset_idx': self.current_xoffset_idx,
+            'yoffset_idx': self.current_yoffset_idx
         }
         try:
             # 'wb' steht für 'write binary'
@@ -1125,17 +1148,20 @@ class General(QWidget):
                 with open(self.settings_file, 'rb') as f:
                     settings = pickle.load(f)
                 # Die .get()-Methode wird verwendet, um Standardwerte zu setzen,
-                # falls ein Schlüssel in der geladenen Datei fehlt (z.B. nach einem Update).
-                self.current_vdiv = settings.get('vdiv', self.current_vdiv)
-                self.current_timebase = settings.get('timebase', self.current_timebase)
-                self.current_xoffset = settings.get('xoffset', self.current_xoffset)
-                self.current_yoffset = settings.get('yoffset', self.current_yoffset)
+                # falls ein Schlüssel in der geladenen Datei fehlt.
+                self.current_vdiv_idx = settings.get('vdiv_idx', self.current_vdiv_idx)
+                self.current_vdiv = self.vdiv_values[self.current_vdiv_idx]
+                self.current_timebase_idx = settings.get('timebase_idx', self.current_timebase_idx)
+                self.current_timebase = self.timebase_values[self.current_timebase_idx]
+
+                self.current_xoffset_idx = settings.get('xoffset_idx', self.current_xoffset_idx)
+                self.current_yoffset_idx = settings.get('yoffset_idx', self.current_yoffset_idx)
+        
                 print(f"Einstellungen erfolgreich aus '{self.settings_file}' geladen.")
             except Exception as e:
                 print(f"Fehler beim Laden der Einstellungen (Datei möglicherweise beschädigt): {e}. Verwende Standardwerte.")
-                # Optional: Löschen Sie die beschädigte Datei, damit beim nächsten Start
-                # eine neue Datei mit Standardwerten erstellt wird.
-                # os.remove(self.settings_file)
+                # Löschen Sie die beschädigte Datei, damit beim nächsten Start eine neue Datei mit Standardwerten erstellt wird.
+                os.remove(self.settings_file)
         else:
             print(f"Einstellungsdatei '{self.settings_file}' nicht gefunden. Verwende Standardwerte.")
 
@@ -1211,10 +1237,7 @@ class Debugging(QWidget):
             str = msg["FREQUENCY"]
             if str.startswith("SAMPLING_FREQUENCY:"):
                 freq_str = str.split(":")[1].strip()
-                self.actual_samplingfrequency.setText(freq_str+" Hz")
-                        
-                        
-            
+                self.actual_samplingfrequency.setText(freq_str+" Hz")           
                     
         
 class StackedWidgetApp(QMainWindow):
